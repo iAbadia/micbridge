@@ -18,6 +18,8 @@ jobs:
         with:
           node-version: '24'
       - uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
       - uses: NuGet/setup-nuget@v2
       - uses: ilammy/msvc-dev-cmd@v1
       - name: Test bounded audio transport
@@ -30,9 +32,20 @@ jobs:
           cl /EHsc /W4 /WX /std:c++17 native/windows-driver/install.cpp /Fe:MicbridgeDriverSetup.exe
           if ($LASTEXITCODE) { throw 'Device setup compilation failed' }
       - run: node scripts/prepare-windows-driver.mjs
+      - uses: actions/cache/restore@v4
+        id: kits
+        with:
+          path: .tools/micbridge-driver/packages
+          key: windows-driver-kits-10.0.28000.2526
       - name: Restore pinned SDK and WDK
+        if: steps.kits.outputs.cache-hit != 'true'
         shell: pwsh
         run: nuget restore .tools/micbridge-driver/packages.config -PackagesDirectory .tools/micbridge-driver/packages -NonInteractive
+      - uses: actions/cache/save@v4
+        if: steps.kits.outputs.cache-hit != 'true'
+        with:
+          path: .tools/micbridge-driver/packages
+          key: windows-driver-kits-10.0.28000.2526
       - name: Build unsigned development driver
         shell: pwsh
         run: |
@@ -40,7 +53,7 @@ jobs:
             Where-Object { $_.Name -in 'stampinf.exe', 'Inf2Cat.exe', 'signtool.exe' -and $_.FullName -notmatch '\\arm64\\' } |
             Select-Object -ExpandProperty DirectoryName -Unique
           $env:PATH = ($toolDirectories -join ';') + ';' + $env:PATH
-          msbuild .tools/micbridge-driver/audio/simpleaudiosample/SimpleAudioSample.sln /m /p:Configuration=Release /p:Platform=x64 /p:SignMode=Off /p:DriverSignEnabled=false /p:Inf2CatUseLocalTime=true
+          msbuild .tools/micbridge-driver/audio/simpleaudiosample/SimpleAudioSample.sln /m /p:Configuration=Release /p:Platform=x64 /p:PreferredToolArchitecture=x64 /p:SignMode=Off /p:DriverSignEnabled=false /p:Inf2CatUseLocalTime=true
       - name: Stage development package
         shell: pwsh
         run: |
