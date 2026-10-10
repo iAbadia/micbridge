@@ -1,0 +1,51 @@
+name: Windows virtual microphone driver
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['native/windows-driver/**', 'scripts/prepare-windows-driver.mjs', '.github/workflows/windows-driver.yml']
+  pull_request:
+    paths: ['native/windows-driver/**', 'scripts/prepare-windows-driver.mjs', '.github/workflows/windows-driver.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: microsoft/setup-msbuild@v2
+      - uses: NuGet/setup-nuget@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Test bounded audio transport
+        shell: pwsh
+        run: |
+          cl /EHsc /W4 /WX /std:c++17 native/windows-driver/buffer-test.cpp /Fe:buffer-test.exe
+          if ($LASTEXITCODE) { throw 'Buffer test compilation failed' }
+          ./buffer-test.exe
+          if ($LASTEXITCODE) { throw 'Buffer tests failed' }
+          cl /EHsc /W4 /WX /std:c++17 native/windows-driver/install.cpp /Fe:MicbridgeDriverSetup.exe
+          if ($LASTEXITCODE) { throw 'Device setup compilation failed' }
+      - run: node scripts/prepare-windows-driver.mjs
+      - name: Restore pinned SDK and WDK
+        shell: pwsh
+        run: nuget restore .tools/micbridge-driver/packages.config -PackagesDirectory .tools/micbridge-driver/packages -NonInteractive
+      - name: Build unsigned development driver
+        shell: pwsh
+        run: msbuild .tools/micbridge-driver/audio/simpleaudiosample/SimpleAudioSample.sln /m /p:Configuration=Release /p:Platform=x64 /p:SignMode=Off /p:DriverSignEnabled=false /p:Inf2CatUseLocalTime=true
+      - name: Stage development package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force driver-artifact | Out-Null
+          Get-ChildItem .tools/micbridge-driver/audio/simpleaudiosample -Recurse -File | Where-Object { $_.Extension -in '.sys', '.inf', '.cat' } | Copy-Item -Destination driver-artifact
+          if (!(Test-Path driver-artifact/SimpleAudioSample.sys) -or !(Test-Path driver-artifact/SimpleAudioSample.inf)) { throw 'Driver package missing' }
+          Copy-Item .tools/micbridge-driver/LICENSE driver-artifact/MS-PL.txt
+          Copy-Item native/windows-driver/README.md driver-artifact/README.md
+          Copy-Item MicbridgeDriverSetup.exe driver-artifact/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: micbridge-windows-driver-x64-development-unsigned
+          path: driver-artifact/

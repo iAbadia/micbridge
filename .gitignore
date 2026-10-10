@@ -12,6 +12,11 @@ web/*.js.map
 !web/playback-worklet.js
 !web/setup.js
 native/bin/
+native/windows-driver/package/
+buffer-test.exe
+buffer-test.obj
+install.obj
+MicbridgeDriverSetup.exe
 native/**/obj/
 native/**/bin/
 analysis/*.log

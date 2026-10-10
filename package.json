@@ -61,7 +61,16 @@
         "nsis",
         "portable"
       ],
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.ico",
+      "extraResources": [
+        {
+          "from": "native/windows-driver/package",
+          "to": "windows-driver",
+          "filter": [
+            "**/*"
+          ]
+        }
+      ]
     },
     "nsis": {
       "artifactName": "Micbridge-${version}-windows-${arch}-setup.${ext}",
@@ -73,7 +82,8 @@
       "createStartMenuShortcut": true,
       "shortcutName": "Micbridge",
       "license": "LICENSE",
-      "deleteAppDataOnUninstall": false
+      "deleteAppDataOnUninstall": false,
+      "include": "native/windows-driver/installer.nsh"
     },
     "portable": {
       "artifactName": "Micbridge-${version}-windows-${arch}-portable.${ext}"
