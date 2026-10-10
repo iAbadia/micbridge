@@ -22,6 +22,15 @@ foreach ($service in @('AudioEndpointBuilder', 'Audiosrv')) {
   Set-Service -Name $service -StartupType Manual
   Start-Service -Name $service
 }
+# Hosted Windows runners can deny microphone capture by default. Configure
+# capture consent only in this disposable VM, never in the shipping installer.
+foreach ($root in @('HKCU:', 'HKLM:')) {
+  $consent = "$root\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone"
+  New-Item -Path $consent -Force | Out-Null
+  Set-ItemProperty -Path $consent -Name Value -Value Allow
+  New-Item -Path "$consent\NonPackaged" -Force | Out-Null
+  Set-ItemProperty -Path "$consent\NonPackaged" -Name Value -Value Allow
+}
 Add-Type -Path (Join-Path $directory 'endpoints.cs')
 $count = 0
 for ($attempt = 0; $attempt -lt 20 -and -not $count; $attempt++) {
