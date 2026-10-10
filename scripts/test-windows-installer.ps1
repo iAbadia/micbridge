@@ -28,7 +28,8 @@ try {
   if ($registration.Count -ne 1) { throw 'Per-user uninstaller registration not found.' }
   $desktopShortcut = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Micbridge.lnk'
   $menuShortcut = Join-Path ([Environment]::GetFolderPath('StartMenu')) 'Programs/Micbridge.lnk'
-  if (-not (Test-Path -LiteralPath $desktopShortcut) -or -not (Test-Path -LiteralPath $menuShortcut)) {
+  $setupShortcut = Join-Path ([Environment]::GetFolderPath('StartMenu')) 'Programs/Micbridge virtual microphone setup.lnk'
+  if (-not (Test-Path -LiteralPath $desktopShortcut) -or -not (Test-Path -LiteralPath $menuShortcut) -or -not (Test-Path -LiteralPath $setupShortcut)) {
     throw 'Installer shortcuts not found.'
   }
   Write-Output 'Installer verified: custom directory with spaces, installed files, shortcuts, and per-user uninstall registration.'
@@ -44,6 +45,7 @@ try {
       $_.DisplayName -eq "Micbridge $version" -and $_.UninstallString -and $_.UninstallString.Contains($uninstaller)
     })
     if ($remaining.Count) { throw 'Uninstaller registration remains after uninstall.' }
+    if (Test-Path -LiteralPath $setupShortcut) { throw 'Virtual microphone setup shortcut remains after uninstall.' }
     Write-Output 'Uninstall verified: executable and per-user registration removed.'
   }
 }

@@ -17,6 +17,7 @@ public static class MicbridgeCableEndpoints {
   [DllImport("ole32.dll")] static extern int PropVariantClear(ref Value value);
   [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode)] static extern uint CM_Locate_DevNodeW(out uint node, string id, uint flags);
   [DllImport("cfgmgr32.dll")] static extern uint CM_Set_DevNode_PropertyW(uint node, ref Key key, uint type, byte[] data, uint size, uint flags);
+  [DllImport("cfgmgr32.dll")] static extern uint CM_Get_DevNode_PropertyW(uint node, ref Key key, out uint type, byte[] data, ref uint size, uint flags);
   [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")] class Enumerator {}
   [ComImport, Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   interface Devices {
@@ -70,16 +71,22 @@ public static class MicbridgeCableEndpoints {
           string publisher = Read(store, new Key("026e516e-b814-414b-83cd-856d6fef4822", 2));
           Key friendly = new Key("a45c254e-df1c-4efd-8020-67d146a850e0", 14);
           string name = Read(store, friendly);
-          if (publisher != "VB-Audio Virtual Cable" || (name.IndexOf("CABLE Output", StringComparison.OrdinalIgnoreCase) < 0
-            && name != "Micbridge Microphone (VB-CABLE)")) continue;
+          if (publisher != "VB-Audio Virtual Cable") continue;
           names.Add(name);
           if (!rename) { renamed++; continue; }
           if (name == "Micbridge Microphone (VB-CABLE)") { renamed++; continue; }
           string instance = Read(store, new Key("78c34fc8-104a-4aca-9ea4-524d52996e57", 256));
-          if (!instance.StartsWith("SWD\\MMDEVAPI\\", StringComparison.OrdinalIgnoreCase)) throw new Exception("Unexpected audio endpoint device instance; refusing rename.");
+          // Core Audio can return the opaque MMDevice ID rather than the PnP
+          // namespace-qualified ID. Preserve the ID and verify the target class.
+          if (instance.StartsWith("{")) instance = "SWD\\MMDEVAPI\\" + instance;
+          if (!instance.StartsWith("SWD\\MMDEVAPI\\", StringComparison.OrdinalIgnoreCase)) throw new Exception("Unexpected audio endpoint device instance: " + instance);
           uint node;
           uint result = CM_Locate_DevNodeW(out node, instance, 0);
           if (result != 0) throw new Exception("Locate recording endpoint failed: " + result);
+          Key classKey = new Key("a45c254e-df1c-4efd-8020-67d146a850e0", 10);
+          byte[] classBytes = new byte[16]; uint classSize = 16, classType;
+          result = CM_Get_DevNode_PropertyW(node, ref classKey, out classType, classBytes, ref classSize, 0);
+          if (result != 0 || classType != 13 || new Guid(classBytes) != new Guid("c166523c-fe0c-4a94-a586-f1a80cfbbf3e")) throw new Exception("Target is not an AudioEndpoint device; refusing rename.");
           byte[] bytes = Encoding.Unicode.GetBytes("Micbridge Microphone (VB-CABLE)\0");
           result = CM_Set_DevNode_PropertyW(node, ref friendly, 18, bytes, (uint)bytes.Length, 0);
           if (result != 0) throw new Exception("Rename recording endpoint failed: " + result);

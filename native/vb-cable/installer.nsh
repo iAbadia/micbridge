@@ -18,7 +18,9 @@ Function MicbridgeCablePage
   Pop $0
   ${NSD_CreateCheckbox} 0 48u 100% 20u "Set up VB-CABLE virtual microphone (recommended)"
   Pop $CableCheckbox
-  ${NSD_Check} $CableCheckbox
+  ${If} $CableInstall != ${BST_UNCHECKED}
+    ${NSD_Check} $CableCheckbox
+  ${EndIf}
   ${NSD_CreateLabel} 0 76u 100% 48u "VB-CABLE is donationware, separately licensed from Micbridge. All contributions are welcome. Professional use may require a paid license. Existing installations are reused without renaming; uninstalling Micbridge keeps the shared cable."
   Pop $0
   ${NSD_CreateLink} 0 128u 100% 14u "VB-Audio: download, donate and purchase licenses"
