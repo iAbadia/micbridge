@@ -4,7 +4,7 @@ Turn your phone into a microphone for your desktop over your local network.
 
 ## Downloads
 
-- **Micbridge 0.3.0.exe**: portable Windows x64 desktop. Download and run; no separate phone app is required.
+- **Micbridge-0.3.0-windows-x64.exe**: portable Windows x64 desktop. Download and run; no separate phone app is required.
 - **Micbridge-0.3.0-notices.zip**: MIT license, dependency inventory, and third-party license texts. These are also included inside the portable application's resources.
 - **SHA256SUMS.txt**: checksums for the executable and notices archive. On Windows, compare with `Get-FileHash -Algorithm SHA256`.
 
