@@ -1,4 +1,5 @@
 import { decodeFrame, encodeFrame } from '../shared/audio';
+import { routeWindowsAudio } from '../shared/windows-audio-route';
 const root = document.querySelector<HTMLDivElement>('#app')!;
 const phone = location.pathname === '/phone';
 let token = location.hash.slice(1);
@@ -128,9 +129,9 @@ async function enableWindowsMicrophone() {
   windowsVirtualEnabled = false;
   byId('windows-virtual').textContent = 'Enable Micbridge microphone';
   byId('windows-virtual-status').textContent = 'Starting';
-  await context.setSinkId(target.deviceId);
-  playback?.port.postMessage({ reset: true });
-  await context.resume(); outputEnabled = true; windowsVirtualEnabled = true;
+  await routeWindowsAudio(context as AudioContext & { setSinkId: (id: string) => Promise<void> }, target.deviceId,
+    () => playback?.port.postMessage({ reset: true }));
+  outputEnabled = true; windowsVirtualEnabled = true;
   byId<HTMLSelectElement>('device').value = target.deviceId;
   byId('windows-virtual').textContent = 'Stop Micbridge microphone';
   byId('windows-virtual-status').textContent = 'Active · Select Micbridge Microphone in your meeting or recording app';

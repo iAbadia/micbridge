@@ -21,8 +21,11 @@ for (const name of ['Directory.Build.props', 'packages.config', 'LICENSE']) {
 const main = path.join(generated, 'Source/Main');
 async function transform(relative, apply) {
   const file = path.join(generated, relative);
-  const text = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
-  await fs.writeFile(file, apply(text));
+  const raw = await fs.readFile(file);
+  const utf16 = raw[0] === 0xff && raw[1] === 0xfe;
+  const text = (utf16 ? raw.subarray(2).toString('utf16le') : raw.toString('utf8')).replaceAll('\r\n', '\n');
+  const transformed = apply(text);
+  await fs.writeFile(file, utf16 ? Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from(transformed, 'utf16le')]) : transformed);
 }
 function replaceOnce(text, old, value) {
   if (!text.includes(old)) throw new Error(`Pinned driver source changed: ${old.slice(0, 80)}`);
