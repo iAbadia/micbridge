@@ -30,8 +30,13 @@ for ($attempt = 0; $attempt -lt 20 -and -not $count; $attempt++) {
 }
 if (-not $count) { throw 'Signed driver installed but its recording endpoint is unavailable.' }
 if ([MicbridgeCableEndpoints]::RenameMicrophone() -ne 1) { throw 'Expected exactly one base microphone to rename.' }
-if ([MicbridgeCableEndpoints]::GetMicrophoneNames()[0] -ne 'Micbridge Microphone (VB-CABLE)') { throw 'Display name was not persisted.' }
+Write-Output ('Recording endpoint name: ' + [MicbridgeCableEndpoints]::GetMicrophoneNames()[0])
+if ([MicbridgeCableEndpoints]::GetMicrophoneNames()[0] -notlike 'Micbridge Microphone (VB-CABLE)*') { throw 'Display name was not persisted.' }
 if ([MicbridgeCableEndpoints]::RenameMicrophone() -ne 1) { throw 'Repeat rename must be idempotent.' }
+# Exercise preservation against an actual available endpoint on this VM. A
+# Windows installation may replace the user's previous default with the cable.
+$defaults = [MicbridgeCableEndpoints]::CaptureDefaults()
+if ([MicbridgeCableEndpoints]::RestoreDefaults($defaults) -ne 0) { throw 'Unchanged defaults must not be rewritten.' }
 $reuse = Start-Process -FilePath 'powershell.exe' -ArgumentList ('-NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + (Join-Path $directory 'install.ps1') + '"') -WindowStyle Hidden -Wait -PassThru
 if ($reuse.ExitCode -ne 0) { throw 'Existing-driver reuse failed.' }
 Add-Type -Path 'scripts/windows-audio-roundtrip.cs'

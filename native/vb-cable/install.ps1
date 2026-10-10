@@ -16,13 +16,16 @@ try {
   }
   if (-not $RenameOnly) {
     & (Join-Path $PSScriptRoot 'verify.ps1') -Archive (Join-Path $PSScriptRoot 'VBCABLE_Driver_Pack45.zip')
+    Add-Type -Path (Join-Path $PSScriptRoot 'endpoints.cs')
+    $defaults = [MicbridgeCableEndpoints]::CaptureDefaults()
     # Keep the vendor installer and all signed driver files intact. Its visible
     # installation window also explains the driver and its reboot requirement.
-    $setup = Start-Process -FilePath (Join-Path $PSScriptRoot 'package\VBCABLE_Setup_x64.exe') -WindowStyle Normal -Wait -PassThru
+    try { $setup = Start-Process -FilePath (Join-Path $PSScriptRoot 'package\VBCABLE_Setup_x64.exe') -WindowStyle Normal -Wait -PassThru }
+    finally { [void][MicbridgeCableEndpoints]::RestoreDefaults($defaults) }
     $installed = @(Get-CimInstance Win32_PnPEntity | Where-Object { $_.HardwareID -contains 'VBAudioVACWDM' })
     if (-not $installed.Count) { throw 'VB-CABLE installation was cancelled or did not create the virtual device.' }
   }
-  Add-Type -Path (Join-Path $PSScriptRoot 'endpoints.cs')
+  if ($RenameOnly) { Add-Type -Path (Join-Path $PSScriptRoot 'endpoints.cs') }
   if ($RenameOnly -and -not [MicbridgeCableEndpoints]::GetBaseMicrophoneCount()) { throw 'No active base VB-CABLE microphone was found. Install VB-CABLE, restart Windows and enable its recording endpoint first.' }
   $renamed = 0
   for ($attempt = 0; $attempt -lt 10 -and -not $renamed; $attempt++) {

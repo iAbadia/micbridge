@@ -68,6 +68,56 @@ public static class MicbridgeCableEndpoints {
   public static int RenameMicrophone() { return Scan(true, new List<string>()); }
   public static int GetBaseMicrophoneCount() { return Scan(false, new List<string>()); }
   public static string[] GetMicrophoneNames() { var names = new List<string>(); Scan(false, names); return names.ToArray(); }
+  static string Id(Device device) {
+    IntPtr pointer; Marshal.ThrowExceptionForHR(device.GetId(out pointer));
+    try { return Marshal.PtrToStringUni(pointer); }
+    finally { Marshal.FreeCoTaskMem(pointer); }
+  }
+  public static string[] CaptureDefaults() {
+    var result = new string[6];
+    Devices devices = (Devices)new Enumerator();
+    try {
+      for (int flow = 0; flow < 2; flow++) for (int role = 0; role < 3; role++) {
+        Device device;
+        int error = devices.GetDefaultAudioEndpoint(flow, role, out device);
+        if (error == unchecked((int)0x80070490)) continue; // No default endpoint.
+        Marshal.ThrowExceptionForHR(error);
+        try { result[flow * 3 + role] = Id(device); }
+        finally { Marshal.ReleaseComObject(device); }
+      }
+    } finally { Marshal.ReleaseComObject(devices); }
+    return result;
+  }
+  public static int RestoreDefaults(string[] before) {
+    if (before == null || before.Length != 6) throw new ArgumentException("Expected six endpoint roles.");
+    Devices devices = (Devices)new Enumerator();
+    Policy policy = (Policy)new PolicyClient();
+    int restored = 0;
+    try {
+      for (int flow = 0; flow < 2; flow++) for (int role = 0; role < 3; role++) {
+        string previous = before[flow * 3 + role];
+        if (String.IsNullOrEmpty(previous)) continue;
+        Device current = null, old = null; Store store = null;
+        try {
+          if (devices.GetDefaultAudioEndpoint(flow, role, out current) < 0) continue;
+          if (Id(current) == previous) continue;
+          Marshal.ThrowExceptionForHR(current.OpenPropertyStore(0, out store));
+          // Restore only a default that the new base cable replaced. Preserve
+          // other user/device changes and never select an unavailable endpoint.
+          if (Read(store, new Key("026e516e-b814-414b-83cd-856d6fef4822", 2)) != "VB-Audio Virtual Cable") continue;
+          if (devices.GetDevice(previous, out old) < 0) continue;
+          uint state; Marshal.ThrowExceptionForHR(old.GetState(out state));
+          if (state != 1) continue;
+          Marshal.ThrowExceptionForHR(policy.SetDefaultEndpoint(previous, role)); restored++;
+        } finally {
+          if (store != null) Marshal.ReleaseComObject(store);
+          if (current != null) Marshal.ReleaseComObject(current);
+          if (old != null) Marshal.ReleaseComObject(old);
+        }
+      }
+    } finally { Marshal.ReleaseComObject(policy); Marshal.ReleaseComObject(devices); }
+    return restored;
+  }
   static int Scan(bool rename, List<string> names) {
     Devices devices = (Devices)new Enumerator();
     Collection collection = null;
@@ -87,15 +137,14 @@ public static class MicbridgeCableEndpoints {
           names.Add(name);
           if (!rename) { renamed++; continue; }
           if (name == "Micbridge Microphone (VB-CABLE)") { renamed++; continue; }
-          IntPtr identifier;
-          Marshal.ThrowExceptionForHR(device.GetId(out identifier));
-          string instance;
-          try { instance = Marshal.PtrToStringUni(identifier); }
-          finally { Marshal.FreeCoTaskMem(identifier); }
+          string instance = Id(device);
           if (String.IsNullOrEmpty(instance)) throw new Exception("Recording endpoint has no identity; refusing rename.");
           Policy policy = (Policy)new PolicyClient();
           Value value = new Value { type = 31, text = Marshal.StringToCoTaskMemUni("Micbridge Microphone (VB-CABLE)") };
-          try { Marshal.ThrowExceptionForHR(policy.SetPropertyValue(instance, 0, ref friendly, ref value)); }
+          // The display-friendly key is computed and read-only. Windows' rename
+          // operation changes the endpoint description used to build that name.
+          Key description = new Key("a45c254e-df1c-4efd-8020-67d146a850e0", 2);
+          try { Marshal.ThrowExceptionForHR(policy.SetPropertyValue(instance, 0, ref description, ref value)); }
           finally { PropVariantClear(ref value); Marshal.ReleaseComObject(policy); }
           renamed++;
         } finally {
