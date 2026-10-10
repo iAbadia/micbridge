@@ -1,9 +1,9 @@
 {
   "name": "micbridge",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "Browser microphone streaming to a cross-platform desktop",
-  "homepage": "https://github.com/iAbadia/micbridge",
+  "homepage": "https://iabadia.github.io/micbridge/",
   "author": "Iñaki Abadia",
   "license": "MIT",
   "repository": {
@@ -57,15 +57,9 @@
       }
     ],
     "win": {
-      "target": ["nsis", "portable"],
-      "extraResources": [
-        {
-          "from": "native/bin",
-          "to": "native",
-          "filter": [
-            "Micbridge.Driver.exe"
-          ]
-        }
+      "target": [
+        "nsis",
+        "portable"
       ],
       "icon": "assets/icon.ico"
     },

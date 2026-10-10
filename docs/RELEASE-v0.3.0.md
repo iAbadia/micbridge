@@ -1,5 +1,7 @@
 # Micbridge 0.3.0 — early preview
 
+Historical notes: the device adapter described below was removed in v0.3.1. Use v0.3.1 or later for an independent build.
+
 Turn your phone into a microphone for your desktop over your local network.
 
 ## Downloads

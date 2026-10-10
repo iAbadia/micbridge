@@ -8,7 +8,7 @@
 
 Micbridge streams your phone's microphone to a desktop on the same local network. The phone runs a browser app; the desktop receives audio, provides listening and recording controls, and can route it to an available virtual microphone.
 
-> **Early preview · 0.3.0** — Windows desktop monitoring has been tested with an iPhone. Linux/macOS builds and audio routing still need validation on those platforms. Safari screen locking can interrupt streaming; keep the phone app open and the screen awake.
+> **Early preview · 0.3.1** — Windows desktop monitoring has been tested with an iPhone. Linux/macOS builds pass CI; audio routing still needs hardware validation. Safari screen locking can interrupt streaming; keep the phone app open and the screen awake.
 
 ## Make the microphone you already own useful
 
@@ -23,13 +23,13 @@ Micbridge streams your phone's microphone to a desktop on the same local network
 
 ## Get started
 
-Download the [Windows preview](https://github.com/iAbadia/micbridge/releases/tag/v0.3.0) and run the portable executable. It is unsigned; Windows may show a SmartScreen warning. The phone app is served by the desktop, so no separate phone download is needed.
+Download the [Windows preview](https://github.com/iAbadia/micbridge/releases/tag/v0.3.1) and choose the setup wizard or portable executable. It is unsigned; Windows may show a SmartScreen warning. The phone app is served by the desktop, so no separate phone download is needed.
 
-Future GitHub builds include a Windows **setup** executable with an installation wizard and a separate **portable** executable. On macOS, open the DMG and drag the app into Applications. On Linux, install the `.deb` using your package manager, or make the AppImage executable and run it.
+GitHub builds include a Windows **setup** executable with an installation wizard and a separate **portable** executable. On macOS, open the DMG and drag the app into Applications. On Linux, install the `.deb` using your package manager, or make the AppImage executable and run it.
 
 ### Run from source
 
-Use Node.js 24 LTS and npm. The Windows native adapter is optional during development; build it separately if you need the existing-driver route.
+Use Node.js 24 LTS and npm. No other microphone app, native helper, or .NET SDK is required.
 
 ```sh
 npm ci
@@ -52,19 +52,19 @@ npm run serve
 
 The default phone address is `https://YOUR-DESKTOP-IP:8443/phone`. Reserve the desktop's IP in your router to keep the address stable. Port 8442 serves public certificate setup material; microphone audio and pairing use HTTPS on 8443.
 
-See the [setup guide](docs/SETUP.md) for certificate trust, environment variables, routing, and build commands.
+Visit the [project homepage](https://iabadia.github.io/micbridge/). See the [setup guide](docs/SETUP.md) for certificate trust, environment variables, routing, and build commands.
 
 ## Platform support
 
 | Platform | Current status | Audio routing |
 | --- | --- | --- |
-| **Windows desktop** | Local build and runtime tested | Desktop monitoring; optional adapter for an already installed other microphone software V2 driver, or an external virtual audio cable |
+| **Windows desktop** | Local build and runtime tested | Desktop monitoring; independent virtual audio cable for use in other apps |
 | **Linux desktop** | Implemented; runtime unverified | PulseAudio / PipeWire compatibility using `pactl` and `pacat` |
-| **macOS desktop** | Packaging configured; runtime unverified | An externally installed virtual audio device is required |
+| **macOS desktop** | Builds pass CI; runtime unverified | An externally installed virtual audio device is required |
 | **iPhone / Safari** | User confirmed audible desktop monitoring | Foreground browser capture; locked-screen streaming is not reliable |
 | **Android browser** | Implemented; device unverified | Requires trusted HTTPS and microphone permission |
 
-Micbridge does not install a Windows kernel driver. The optional Windows adapter depends on the existing other microphone software V2 device, and its actual consumption in a meeting app still needs testing. A virtual audio cable is a separate, externally installed component.
+Micbridge has no dependency on other microphone software. It does not install a Windows kernel driver. For meeting/recording apps on Windows, install an independent virtual audio cable and choose its playback endpoint under Desktop output, then its recording endpoint in the consuming app. A Micbridge-owned Windows virtual driver is not yet implemented.
 
 ## Privacy and pairing
 
@@ -85,7 +85,7 @@ flowchart LR
     Virtual --> App[Meeting or recording app]
 ```
 
-The desktop uses Electron and TypeScript; browser capture uses an AudioWorklet. Audio uses 20 ms mono PCM frames over WebSocket. The optional Windows driver adapter is written in C# and packaged with a self-contained .NET runtime. Browser noise reduction uses the browser's processing rather than a bundled neural model.
+The desktop uses Electron and TypeScript; browser capture uses an AudioWorklet. Audio uses 20 ms mono PCM frames over WebSocket. Browser noise reduction uses the browser's processing rather than a bundled neural model.
 
 ## Development
 
@@ -94,15 +94,14 @@ npm test           # Build and run the automated checks
 npm run package    # Build an unpacked desktop app
 ```
 
-For Windows packaging, publish the optional adapter first:
+For Windows packaging:
 
 ```sh
-dotnet publish native/Micbridge.Driver/Micbridge.Driver.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o native/bin
 node scripts/release-notices.mjs
 npm run dist:win
 ```
 
-Set `DOTNET_ROOT` to the installed SDK directory when generating Windows notices (the script defaults to `.tools/dotnet`). Build Linux/macOS packages on their respective hosts with `npm run dist:linux` or `npm run dist:mac`. CI builds do not replace audio routing tests on actual hardware. Current preview binaries are unsigned.
+Build Linux/macOS packages on their respective hosts with `npm run dist:linux` or `npm run dist:mac`. CI builds do not replace audio routing tests on actual hardware. Current preview binaries are unsigned.
 
 ## Roadmap
 

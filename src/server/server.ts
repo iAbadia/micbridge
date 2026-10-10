@@ -12,7 +12,7 @@ import QRCode from 'qrcode';
 import { decodeFrame, rms, waveHeader, HEADER_BYTES } from '../shared/audio.js';
 import { VirtualMicrophone } from './virtual-mic.js';
 
-export interface Options { directory: string; webRoot?: string; driverPath?: string; localPort?: number; mobilePort?: number; setupPort?: number; tls?: { key: string; cert: string } }
+export interface Options { directory: string; webRoot?: string; localPort?: number; mobilePort?: number; setupPort?: number; tls?: { key: string; cert: string } }
 export interface StreamState {
   connected: boolean; device: string; frames: number; bytes: number; dropped: number;
   sampleRate: number; level: number; recording: boolean; recordingFile: string | null;
@@ -73,7 +73,7 @@ export async function startServer(options: Options) {
   const broadcastState = () => { for (const ws of receivers) send(ws, { type: 'state', state }); };
   const resetStream = () => { state.connected = false; state.device = ''; state.level = 0; lastSequence = undefined; broadcastState(); };
   const control = () => { if (sender) send(sender, { type: 'settings', gain: state.gain, muted: state.muted, noiseSuppression: state.noiseSuppression }); };
-  const virtual = new VirtualMicrophone(options.driverPath ?? fileURLToPath(new URL('../../native/bin/Micbridge.Driver.exe', import.meta.url)), value => { state.virtualMic = value; broadcastState(); });
+  const virtual = new VirtualMicrophone(value => { state.virtualMic = value; broadcastState(); });
   let virtualOperations: Promise<void> = Promise.resolve();
 
   async function stopRecording() {
@@ -176,7 +176,7 @@ export async function startServer(options: Options) {
   async function config() {
     const urls = (addresses.length ? addresses : ['127.0.0.1']).map(ip => `https://${ip}:${mobilePort}/phone`);
     const qrs = await Promise.all(urls.map(url => QRCode.toDataURL(url, { width: 240, margin: 1 })));
-    return { urls, qr: qrs[0], qrs, pairingCode, pairingExpires, state, platform: process.platform, version: '0.3.0', fingerprint: certificates.fingerprint,
+    return { urls, qr: qrs[0], qrs, pairingCode, pairingExpires, state, platform: process.platform, version: '0.3.1', fingerprint: certificates.fingerprint,
       setupUrls: (addresses.length ? addresses : ['127.0.0.1']).map(ip => `http://${ip}:${setupPort}/setup`),
       setupQrs: await Promise.all((addresses.length ? addresses : ['127.0.0.1']).map(ip => QRCode.toDataURL(`http://${ip}:${setupPort}/setup`, { width: 240, margin: 1 }))) };
   }

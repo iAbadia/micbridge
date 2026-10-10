@@ -11,6 +11,7 @@ if (Test-Path -LiteralPath $installDir) { throw 'Smoke install directory already
 try {
   $setup = Start-Process -FilePath $installer -ArgumentList ('/S /currentuser /D=' + $installDir) -WindowStyle Hidden -Wait -PassThru
   if ($setup.ExitCode -ne 0) { throw "Installer failed: $($setup.ExitCode)" }
+  if (Test-Path -LiteralPath (Join-Path $installDir 'resources/native')) { throw 'Retired native helper is still bundled.' }
   foreach ($file in @($appExe, $uninstaller, (Join-Path $installDir 'resources/notices/MICBRIDGE-LICENSE.txt'))) {
     if (-not (Test-Path -LiteralPath $file)) { throw "Missing installed file: $file" }
   }

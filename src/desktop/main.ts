@@ -1,6 +1,5 @@
 import { app, BrowserWindow, Menu, Tray, nativeImage, session, dialog } from 'electron';
 import { startServer } from '../server/server.js';
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promises as fs } from 'node:fs';
 let win: BrowserWindow | null = null;
@@ -17,7 +16,7 @@ else {
   void app.whenReady().then(async () => {
   try {
     const tls = process.env.MICBRIDGE_TLS_KEY && process.env.MICBRIDGE_TLS_CERT ? { key: await fs.readFile(process.env.MICBRIDGE_TLS_KEY, 'utf8'), cert: await fs.readFile(process.env.MICBRIDGE_TLS_CERT, 'utf8') } : undefined;
-    backend = await startServer({ directory: process.env.MICBRIDGE_DATA ?? app.getPath('userData'), mobilePort: Number(process.env.MICBRIDGE_PORT ?? 8443), setupPort: Number(process.env.MICBRIDGE_SETUP_PORT ?? 8442), tls, driverPath: app.isPackaged ? path.join(process.resourcesPath, 'native', 'Micbridge.Driver.exe') : fileURLToPath(new URL('../../native/bin/Micbridge.Driver.exe', import.meta.url)) });
+    backend = await startServer({ directory: process.env.MICBRIDGE_DATA ?? app.getPath('userData'), mobilePort: Number(process.env.MICBRIDGE_PORT ?? 8443), setupPort: Number(process.env.MICBRIDGE_SETUP_PORT ?? 8442), tls });
   } catch (err) {
     dialog.showErrorBox('Micbridge could not start', (err as Error).message); app.exit(1); throw err;
   }

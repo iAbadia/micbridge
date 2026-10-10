@@ -32,11 +32,11 @@ For a trusted certificate, the CLI accepts `MICBRIDGE_TLS_KEY` and `MICBRIDGE_TL
 
 ## Audio routing
 
-- **Windows**: the native adapter uses an already installed **other microphone software V2** driver (`\\.\other microphone softwareV2`). It never installs or replaces a driver. Close the original other microphone software client before enabling the adapter, then select the other microphone software microphone in your meeting/recording app. The adapter requires 48 kHz phone capture. If the driver is absent, use an installed virtual audio cable and select its playback endpoint under Desktop output.
+- **Windows**: enable Desktop output for headphone monitoring. To use received audio in a meeting/recording app, install an independent virtual audio cable, choose its playback endpoint in Micbridge, then select its recording endpoint as the microphone in the consuming app. Micbridge never opens a other microphone software device, installs its driver, or requires its application.
 - **Linux**: the adapter uses `pactl` and `pacat` with PulseAudio or PipeWire's PulseAudio compatibility service. It creates a null sink and remapped microphone on explicit enable and unloads its modules when disabled or the app exits. Select **Micbridge Microphone** in the consuming app. These tools must already be installed. Linux routing is implemented but not tested on this Windows host.
 - **macOS**: select an installed virtual audio device as Desktop output, then its input endpoint in the consuming app. A built-in CoreAudio virtual driver is not implemented. macOS runtime/packaging needs validation on a Mac.
 
-Desktop monitoring runs separately from the native virtual adapter; enable only the outputs you need. Browser noise suppression is not equivalent to other microphone software's DeepFilterNet models. PCM16 mono over WebSocket prioritizes simple browser support over codec/network parity. It uses about 96 KB/s audio payload, plus framing, before transport overhead. TCP can add latency under loss; WebRTC Opus is the next media transport candidate.
+Desktop monitoring runs separately from the native virtual adapter; enable only the outputs you need. Browser noise suppression uses the phone browser rather than a bundled neural model. PCM16 mono over WebSocket prioritizes simple browser support over codec/network parity. It uses about 96 KB/s audio payload, plus framing, before transport overhead. TCP can add latency under loss; WebRTC Opus is the next media transport candidate.
 
 ## Builds and checks
 
@@ -48,19 +48,13 @@ npm run dist:linux
 npm run dist:mac
 ```
 
-Build Windows native adapter with the .NET 10 SDK before packaging Windows:
-
-```sh
-dotnet publish native/Micbridge.Driver/Micbridge.Driver.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o native/bin
-```
-
-The self-contained helper removes the .NET runtime requirement for users. Source builds on Linux/macOS do not need this Windows helper. Build each OS on its own host; configured targets are not a claim of verified cross-compilation. Packages are unsigned development previews. The GitHub Actions workflow defines Windows/Linux/macOS builds but has not been run remotely.
+Generate runtime notices with `node scripts/release-notices.mjs` before packaging. No native Windows helper or .NET SDK is required. Build each OS on its own host. Packages are unsigned previews. GitHub builds have passed for Windows, Linux, and both macOS architectures; hardware audio routing still needs platform validation.
 
 Tests cover malformed frames, signed sample preservation, sequence wrap, TLS WebSocket pairing, admission rejection, synchronized controls, WAV finalization and capture/playback worklets. Microphone permission and real-phone streaming still need human device validation. No real microphone was captured during automated testing.
 
 ## Limitations
 
-Safari screen-lock streaming is not reliable. Linux/macOS routing remains unverified. The optional Windows adapter requires an existing other microphone software V2 driver.
+Safari screen-lock streaming is not reliable. Linux/macOS routing remains unverified. Windows routing to other apps requires an independently installed virtual audio cable; an integrated virtual driver is not yet implemented.
 
 User audio stays on the local network. There is no vendor telemetry or third-party media upload. WAV recordings are saved locally only when Record WAV is enabled. Pairing credentials persist locally and can be revoked using Forget paired phones. Six-digit pairing codes are single-use, expire after ten minutes, and have a global limit of ten pairing attempts per minute. The HTTPS-only pairing endpoint requires a same-origin JSON POST. Legacy full pairing links migrate to the persistent cookie and then clear their fragment. The desktop administrator token remains temporary and separate. Receiver and recording queues are bounded where implemented; transport/head-of-line behavior remains a measured-performance gap.
 

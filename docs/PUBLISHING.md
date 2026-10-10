@@ -13,15 +13,15 @@
 - [x] Initialize a local Git repository on main and inspect the 43 files staged for the first commit.
 - [x] Add ignore rules for installed/recovered investigation material, local screenshots, generated builds, certificates, app data, and recordings. Preserve investigation material privately.
 - [x] Verify staged source excludes investigation/build/app-data paths and private key/audio artifacts; inspect the public banner. Before adding release screenshots, sanitize them separately.
-- [x] Include third-party notices for dependencies and the bundled Electron/.NET runtimes in the Windows preview distribution.
+- [x] Include third-party notices for dependencies and the bundled Electron runtime in the Windows preview distribution.
 - [ ] Enable a private security reporting channel before publishing SECURITY.md contact instructions.
 - [x] Add issue templates and MIT contribution instructions.
 
 ## Product and release readiness
 
 - [ ] Publish as an early preview, with Windows runtime evidence and Linux/macOS validation limits clearly stated.
-- [ ] Test fresh-machine Windows monitoring and an independently installed virtual audio cable. The current native adapter depends on an existing other microphone software V2 driver; its binary is not supplied.
-- [ ] Review the adapter's provenance and dependency before distributing it publicly. Exclude third-party proprietary binaries, models, and artwork.
+- [ ] Test fresh-machine Windows monitoring and an independently installed virtual audio cable. There is no bundled Windows kernel driver; use an independent virtual audio cable.
+- [x] Remove the legacy Windows device adapter and native helper from source, runtime, packaging, and CI. No proprietary binaries, models, or artwork are included.
 - [ ] Validate iPhone profile installation and persistent pairing inside the home-screen app, including reopen/reboot and revoked cookies.
 - [x] Disclose Safari screen-lock interruption prominently in README and release notes.
 - [ ] Validate Linux audio module cleanup and macOS virtual output routing on actual hosts.

@@ -3,8 +3,7 @@ import path from 'node:path';
 
 // Collect the licenses shipped with the locked production dependencies.
 const target = 'release/notices';
-const dotnetRoot = process.env.DOTNET_ROOT || '.tools/dotnet';
-// Do not carry Windows runtime notices into a later build for another platform.
+// Remove notices for the retired native helper when reusing a build directory.
 for (const name of ['DOTNET-LICENSE.txt', 'DOTNET-THIRD-PARTY-NOTICES.txt']) {
   fs.rmSync(path.join(target, name), { force: true });
 }
@@ -28,10 +27,6 @@ const runtimeNotices = [
   ['node_modules/electron/dist/LICENSE', 'ELECTRON-LICENSE.txt'],
   ['node_modules/electron/dist/LICENSES.chromium.html', 'CHROMIUM-LICENSES.html'],
 ];
-if (process.platform === 'win32') runtimeNotices.push(
-  [path.join(dotnetRoot, 'LICENSE.txt'), 'DOTNET-LICENSE.txt'],
-  [path.join(dotnetRoot, 'ThirdPartyNotices.txt'), 'DOTNET-THIRD-PARTY-NOTICES.txt'],
-);
 for (const [source, name] of runtimeNotices) {
   if (!fs.existsSync(source)) throw new Error(`Required notice missing: ${source}`);
   fs.copyFileSync(source, `${target}/${name}`);
