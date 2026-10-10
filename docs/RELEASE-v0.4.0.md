@@ -11,6 +11,16 @@ select their recording endpoint, usually **CABLE Output**, in the consuming app.
 An optional rename button is available in Micbridge. The shared VB-CABLE remains
 installed when Micbridge is removed.
 
+Setup preserves available speaker/microphone defaults when the new cable replaces
+them. Check your Windows sound settings after restarting. The official setup and
+driver package are preserved unchanged with their original publisher signatures.
+
+Validation includes 14 application tests, Windows app installation/uninstall,
+fresh signed driver installation, endpoint naming, existing-driver reuse, and a
+real 48 kHz stereo tone recorded through the cable on a disposable Windows runner.
+Phone-to-conferencing-app validation on physical Windows 10/11 hardware remains
+the final manual check; this release is kept as a draft preview for that review.
+
 The desktop app also includes setup/retry buttons and a Start menu setup shortcut.
 Automatic routing targets the base CABLE Input, with silence during switching and
 no intentional fallback to default speakers when the virtual device is missing.

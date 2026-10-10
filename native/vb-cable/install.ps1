@@ -21,16 +21,24 @@ try {
     # Keep the vendor installer and all signed driver files intact. Its visible
     # installation window also explains the driver and its reboot requirement.
     try { $setup = Start-Process -FilePath (Join-Path $PSScriptRoot 'package\VBCABLE_Setup_x64.exe') -WindowStyle Normal -Wait -PassThru }
-    finally { [void][MicbridgeCableEndpoints]::RestoreDefaults($defaults) }
+    finally {
+      try { [void][MicbridgeCableEndpoints]::RestoreDefaults($defaults) }
+      catch { Write-Warning 'Windows audio defaults could not be restored. Select your usual speakers and microphone in Windows Sound settings.' }
+    }
     $installed = @(Get-CimInstance Win32_PnPEntity | Where-Object { $_.HardwareID -contains 'VBAudioVACWDM' })
     if (-not $installed.Count) { throw 'VB-CABLE installation was cancelled or did not create the virtual device.' }
   }
   if ($RenameOnly) { Add-Type -Path (Join-Path $PSScriptRoot 'endpoints.cs') }
   if ($RenameOnly -and -not [MicbridgeCableEndpoints]::GetBaseMicrophoneCount()) { throw 'No active base VB-CABLE microphone was found. Install VB-CABLE, restart Windows and enable its recording endpoint first.' }
   $renamed = 0
-  for ($attempt = 0; $attempt -lt 10 -and -not $renamed; $attempt++) {
-    $renamed = [MicbridgeCableEndpoints]::RenameMicrophone()
-    if (-not $renamed) { Start-Sleep -Seconds 1 }
+  try {
+    for ($attempt = 0; $attempt -lt 10 -and -not $renamed; $attempt++) {
+      $renamed = [MicbridgeCableEndpoints]::RenameMicrophone()
+      if (-not $renamed) { Start-Sleep -Seconds 1 }
+    }
+  } catch {
+    if ($RenameOnly) { throw }
+    Write-Warning 'VB-CABLE was installed, but Windows rejected the microphone display name. Select CABLE Output in your other app, or rename it in Windows Sound settings.'
   }
   if (-not $renamed) { Write-Output 'Microphone display name unchanged. Restart Windows; use Rename virtual microphone from Micbridge if needed.' }
   else { Write-Output 'Microphone display name: Micbridge Microphone (VB-Audio Virtual Cable).' }

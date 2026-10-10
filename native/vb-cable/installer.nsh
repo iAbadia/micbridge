@@ -56,7 +56,7 @@ FunctionEnd
       MessageBox MB_OK|MB_ICONEXCLAMATION "Micbridge was installed, but the virtual microphone setup did not finish. You can retry from Micbridge's Start menu shortcut: Set up virtual microphone. $1"
     ${EndIf}
   ${EndIf}
-  CreateShortCut "$SMPROGRAMS\Micbridge virtual microphone setup.lnk" "$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" '-NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\resources\vb-cable\install.ps1" -Elevate' "$INSTDIR\Micbridge.exe"
+  CreateShortCut "$SMPROGRAMS\Micbridge virtual microphone setup.lnk" "$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" '-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "$INSTDIR\resources\vb-cable\install.ps1" -Elevate' "$INSTDIR\Micbridge.exe"
 !macroend
 !macro customUnInstall
   Delete "$SMPROGRAMS\Micbridge virtual microphone setup.lnk"

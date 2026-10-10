@@ -41,6 +41,15 @@ packaging must run on Windows x64 so signature verification cannot be skipped.
 The download is needed during builds; setup works offline with the bundled files.
 Electron Builder excludes vendor executables from its signing pass.
 
+GitHub's disposable Windows runner verified fresh installation, a started signed
+PnP device, the recording endpoint name, repeat renaming, existing-driver reuse,
+and a real 48 kHz stereo PCM roundtrip. The 1 kHz test tone returned with RMS 0.150,
+peak 12001 and 999 cycles. Capture consent is enabled only in the disposable test
+VM; the shipping app and installer do not change Windows microphone privacy settings.
+Physical Windows 10/11 phone-to-conferencing-app testing is still required before
+claiming broad compatibility. The app/setup executable remains unsigned even
+though VB-CABLE's driver catalog is Microsoft-signed.
+
 The public licensing page grants conditional permission for embedding the base
 package, including silent installation, while the archive's README requests author
 agreement. Bundling here relies on the author's published permission, keeps the
