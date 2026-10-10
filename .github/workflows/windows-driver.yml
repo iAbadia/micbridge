@@ -35,7 +35,12 @@ jobs:
         run: nuget restore .tools/micbridge-driver/packages.config -PackagesDirectory .tools/micbridge-driver/packages -NonInteractive
       - name: Build unsigned development driver
         shell: pwsh
-        run: msbuild .tools/micbridge-driver/audio/simpleaudiosample/SimpleAudioSample.sln /m /p:Configuration=Release /p:Platform=x64 /p:SignMode=Off /p:DriverSignEnabled=false /p:Inf2CatUseLocalTime=true
+        run: |
+          $toolDirectories = Get-ChildItem .tools/micbridge-driver/packages -Recurse -File -Filter *.exe |
+            Where-Object { $_.Name -in 'stampinf.exe', 'Inf2Cat.exe', 'signtool.exe' -and $_.FullName -notmatch '\\arm64\\' } |
+            Select-Object -ExpandProperty DirectoryName -Unique
+          $env:PATH = ($toolDirectories -join ';') + ';' + $env:PATH
+          msbuild .tools/micbridge-driver/audio/simpleaudiosample/SimpleAudioSample.sln /m /p:Configuration=Release /p:Platform=x64 /p:SignMode=Off /p:DriverSignEnabled=false /p:Inf2CatUseLocalTime=true
       - name: Stage development package
         shell: pwsh
         run: |

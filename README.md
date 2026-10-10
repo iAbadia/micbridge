@@ -64,7 +64,7 @@ Visit the [project homepage](https://iabadia.github.io/micbridge/). See the [set
 | **iPhone / Safari** | User confirmed audible desktop monitoring | Foreground browser capture; locked-screen streaming is not reliable |
 | **Android browser** | Implemented; device unverified | Requires trusted HTTPS and microphone permission |
 
-Micbridge has no dependency on other microphone software. It does not install a Windows kernel driver. For meeting/recording apps on Windows, install an independent virtual audio cable and choose its playback endpoint under Desktop output, then its recording endpoint in the consuming app. A Micbridge-owned Windows virtual driver is not yet implemented.
+Micbridge has no dependency on other microphone software. It does not install a Windows kernel driver. For meeting/recording apps on Windows, install an independent virtual audio cable and choose its playback endpoint under Desktop output, then its recording endpoint in the consuming app. A Micbridge-owned Windows virtual driver is implemented in the development source; its dedicated CI builds an unsigned package. Production signing and real Windows audio testing are still required before it can ship in normal installers. See the [driver documentation](native/windows-driver/README.md).
 
 ## Privacy and pairing
 

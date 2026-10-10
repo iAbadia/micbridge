@@ -106,6 +106,7 @@
         "NSMicrophoneUsageDescription": "List audio devices for microphone routing."
       },
       "icon": "assets/icon.png"
-    }
+    },
+    "beforePack": "./scripts/windows-driver-package.cjs"
   }
 }

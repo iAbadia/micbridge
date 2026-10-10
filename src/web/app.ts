@@ -125,6 +125,9 @@ async function enableWindowsMicrophone() {
   const context = playbackContext as AudioContext & { setSinkId?: (id: string) => Promise<void> };
   if (!context.setSinkId) throw new Error('Use the Micbridge desktop app for virtual microphone routing.');
   await context.suspend(); outputEnabled = false;
+  windowsVirtualEnabled = false;
+  byId('windows-virtual').textContent = 'Enable Micbridge microphone';
+  byId('windows-virtual-status').textContent = 'Starting';
   await context.setSinkId(target.deviceId);
   playback?.port.postMessage({ reset: true });
   await context.resume(); outputEnabled = true; windowsVirtualEnabled = true;
@@ -246,7 +249,13 @@ if (phone) {
     if (!playbackContext) { showError('Enable audio output before selecting a device.'); return; }
     const ctx = playbackContext as AudioContext & { setSinkId?: (device: string) => Promise<void> };
     if (!ctx.setSinkId) { showError('Audio output selection is not supported by this browser. Use the desktop app.'); return; }
-    void ctx.setSinkId(byId<HTMLSelectElement>('device').value).catch(showError);
+    void ctx.setSinkId(byId<HTMLSelectElement>('device').value).then(() => {
+      windowsVirtualEnabled = false;
+      if (receiverPlatform === 'win32') {
+        byId('windows-virtual').textContent = 'Enable Micbridge microphone';
+        byId('windows-virtual-status').textContent = 'Using Desktop output';
+      }
+    }).catch(showError);
   };
   void loadConfig().then(() => connect('desktop')).catch(showError);
 }

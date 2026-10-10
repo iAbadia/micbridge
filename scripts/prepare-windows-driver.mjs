@@ -43,19 +43,25 @@ await transform('Source/Main/minwavertstream.cpp', text => {
   const end = text.indexOf('    else if (!g_DoNotCreateDataFiles)', start);
   if (start < 0 || end < 0) throw new Error('Capture initialization patch failed');
   text = text.slice(0, start) + '    if (!m_bCapture && !g_DoNotCreateDataFiles)' + text.slice(end + '    else if (!g_DoNotCreateDataFiles)'.length);
-  text = replaceOnce(text, '    switch (State_)', '    if (!m_bCapture) MicbridgeReset(State_ == KSSTATE_RUN);\n    else if (State_ == KSSTATE_RUN && m_KsState != KSSTATE_RUN) MicbridgeFlush();\n    switch (State_)');
+  text = replaceOnce(text, '    switch (State_)', '    if (!m_bCapture && State_ != m_KsState) MicbridgeReset(State_ == KSSTATE_RUN);\n    else if (m_bCapture && State_ == KSSTATE_RUN && m_KsState != KSSTATE_RUN) MicbridgeFlush();\n    switch (State_)');
   text = replaceOnce(text, '        m_ToneGenerator.GenerateSine(m_pDmaBuffer + bufferOffset, runWrite);', '        MicbridgeTransfer(m_pDmaBuffer + bufferOffset, runWrite, true);');
   text = replaceOnce(text, '        m_SaveData.WriteData(m_pDmaBuffer + bufferOffset, runWrite);', '        MicbridgeTransfer(m_pDmaBuffer + bufferOffset, runWrite, false);');
   text = replaceOnce(text, '        if (!g_DoNotCreateDataFiles)\n        {\n            // Read from buffer and write to a file.\n            ReadBytes(ByteDisplacement);\n        }', '        ReadBytes(ByteDisplacement);');
   // All other sample persistence paths stay disabled regardless of registry.
-  return text.replaceAll('!g_DoNotCreateDataFiles', 'false');
+  text = text.replaceAll('!g_DoNotCreateDataFiles', 'false');
+  // A delayed timer must not replay the same DMA buffer indefinitely at DISPATCH_LEVEL.
+  return text.replaceAll('    ULONG bufferOffset = m_ullLinearPosition % m_ulDmaBufferSize;',
+    '    ULONG bufferOffset = m_ullLinearPosition % m_ulDmaBufferSize;\n    if (ByteDisplacement > m_ulDmaBufferSize) {\n        bufferOffset = (bufferOffset + ByteDisplacement - m_ulDmaBufferSize) % m_ulDmaBufferSize;\n        ByteDisplacement = m_ulDmaBufferSize;\n    }');
 });
 await transform('Source/Filters/micarraywavtable.h', text => text
   .replaceAll('MICARRAY_32_BITS_PER_SAMPLE_PCM', 'MICARRAY_16_BITS_PER_SAMPLE_PCM')
   .replace(/(MICARRAY_16_BITS_PER_SAMPLE_PCM\s+)32/, (_, prefix) => `${prefix}16`)
   .replace('384000,', '192000,').replace('                8,', '                4,')
   .replaceAll('                32,', '                16,').replace('            32,', '            16,')
-  .replace('48 KHz 32-bit', '48 KHz 16-bit'));
+  .replace('48 KHz 32-bit', '48 KHz 16-bit')
+  .replace('// 32 Bits Per Sample', '// 16 Bits Per Sample')
+  .replace('MODE_AND_DEFAULT_FORMAT MicArrayPinSupportedDeviceModes[] =\n{',
+    'MODE_AND_DEFAULT_FORMAT MicArrayPinSupportedDeviceModes[] =\n{\n    { STATIC_AUDIO_SIGNALPROCESSINGMODE_DEFAULT, &MicArrayPinSupportedDeviceFormats[0].DataFormat },'));
 await transform('Source/Main/SimpleAudioSample.inx', text => text
   .replaceAll('ROOT\\SimpleAudioSample', 'ROOT\\Micbridge')
   .replaceAll('SimpleAudioSample.cat', 'Micbridge.cat')
