@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Text;
 
-// Use Windows' supported endpoint property store; never edit the signed INF.
+// Read through Core Audio; rename the endpoint's PnP device instance through
+// Configuration Manager. The Core Audio property store is read-only for clients.
 public static class MicbridgeCableEndpoints {
   [StructLayout(LayoutKind.Sequential)] struct Key {
     public Guid format; public uint id;
@@ -13,6 +15,8 @@ public static class MicbridgeCableEndpoints {
     [FieldOffset(8)] public IntPtr text;
   }
   [DllImport("ole32.dll")] static extern int PropVariantClear(ref Value value);
+  [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode)] static extern uint CM_Locate_DevNodeW(out uint node, string id, uint flags);
+  [DllImport("cfgmgr32.dll")] static extern uint CM_Set_DevNode_PropertyW(uint node, ref Key key, uint type, byte[] data, uint size, uint flags);
   [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")] class Enumerator {}
   [ComImport, Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   interface Devices {
@@ -71,11 +75,14 @@ public static class MicbridgeCableEndpoints {
           names.Add(name);
           if (!rename) { renamed++; continue; }
           if (name == "Micbridge Microphone (VB-CABLE)") { renamed++; continue; }
-          Marshal.ReleaseComObject(store); store = null;
-          Marshal.ThrowExceptionForHR(device.OpenPropertyStore(2, out store));
-          Value value = new Value { type = 31, text = Marshal.StringToCoTaskMemUni("Micbridge Microphone (VB-CABLE)") };
-          try { Marshal.ThrowExceptionForHR(store.SetValue(ref friendly, ref value)); Marshal.ThrowExceptionForHR(store.Commit()); }
-          finally { PropVariantClear(ref value); }
+          string instance = Read(store, new Key("78c34fc8-104a-4aca-9ea4-524d52996e57", 256));
+          if (!instance.StartsWith("SWD\\MMDEVAPI\\", StringComparison.OrdinalIgnoreCase)) throw new Exception("Unexpected audio endpoint device instance; refusing rename.");
+          uint node;
+          uint result = CM_Locate_DevNodeW(out node, instance, 0);
+          if (result != 0) throw new Exception("Locate recording endpoint failed: " + result);
+          byte[] bytes = Encoding.Unicode.GetBytes("Micbridge Microphone (VB-CABLE)\0");
+          result = CM_Set_DevNode_PropertyW(node, ref friendly, 18, bytes, (uint)bytes.Length, 0);
+          if (result != 0) throw new Exception("Rename recording endpoint failed: " + result);
           renamed++;
         } finally {
           if (store != null) Marshal.ReleaseComObject(store);
