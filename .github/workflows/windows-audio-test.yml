@@ -11,10 +11,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: npm
-      - run: npm ci
-      - run: node scripts/release-notices.mjs
-      - run: npm run package -- --x64
+      - run: node scripts/prepare-vb-cable.mjs
+      - name: Stage the same driver resources used by the installer
+        shell: pwsh
+        run: |
+          $target = 'release/win-unpacked/resources/vb-cable'
+          New-Item -ItemType Directory -Force $target | Out-Null
+          Copy-Item .tools/vb-cable-package/* $target -Recurse -Force
+          Get-ChildItem native/vb-cable -File | Where-Object Extension -in '.ps1', '.cs' | Copy-Item -Destination $target
       - name: Install driver, rename microphone and test PCM roundtrip
         shell: pwsh
         run: ./scripts/test-vb-cable-install.ps1

@@ -1,10 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using System.Text;
 
-// Read through Core Audio; rename the endpoint's PnP device instance through
-// Configuration Manager. The Core Audio property store is read-only for clients.
+// Read through Core Audio. Windows exposes endpoint name changes through its
+// internal audio policy interface; the public Core Audio store is read-only.
 public static class MicbridgeCableEndpoints {
   [StructLayout(LayoutKind.Sequential)] struct Key {
     public Guid format; public uint id;
@@ -15,9 +14,22 @@ public static class MicbridgeCableEndpoints {
     [FieldOffset(8)] public IntPtr text;
   }
   [DllImport("ole32.dll")] static extern int PropVariantClear(ref Value value);
-  [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode)] static extern uint CM_Locate_DevNodeW(out uint node, string id, uint flags);
-  [DllImport("cfgmgr32.dll")] static extern uint CM_Set_DevNode_PropertyW(uint node, ref Key key, uint type, byte[] data, uint size, uint flags);
-  [DllImport("cfgmgr32.dll")] static extern uint CM_Get_DevNode_PropertyW(uint node, ref Key key, out uint type, byte[] data, ref uint size, uint flags);
+  [ComImport, Guid("870af99c-171d-4f9e-af0d-e63df40c2bc9")] class PolicyClient {}
+  [ComImport, Guid("f8679f50-850a-41cf-9c72-430f290290c8"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  interface Policy {
+    [PreserveSig] int GetMixFormat(IntPtr id, IntPtr format);
+    [PreserveSig] int GetDeviceFormat(IntPtr id, int defaults, IntPtr format);
+    [PreserveSig] int ResetDeviceFormat(IntPtr id);
+    [PreserveSig] int SetDeviceFormat(IntPtr id, IntPtr format, IntPtr mix);
+    [PreserveSig] int GetProcessingPeriod(IntPtr id, int defaults, IntPtr period, IntPtr minimum);
+    [PreserveSig] int SetProcessingPeriod(IntPtr id, IntPtr period);
+    [PreserveSig] int GetShareMode(IntPtr id, IntPtr mode);
+    [PreserveSig] int SetShareMode(IntPtr id, IntPtr mode);
+    [PreserveSig] int GetPropertyValue(IntPtr id, int effects, ref Key key, out Value value);
+    [PreserveSig] int SetPropertyValue([MarshalAs(UnmanagedType.LPWStr)] string id, int effects, ref Key key, ref Value value);
+    [PreserveSig] int SetDefaultEndpoint([MarshalAs(UnmanagedType.LPWStr)] string id, int role);
+    [PreserveSig] int SetEndpointVisibility(IntPtr id, int visible);
+  }
   [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")] class Enumerator {}
   [ComImport, Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   interface Devices {
@@ -80,20 +92,11 @@ public static class MicbridgeCableEndpoints {
           string instance;
           try { instance = Marshal.PtrToStringUni(identifier); }
           finally { Marshal.FreeCoTaskMem(identifier); }
-          // Core Audio can return the opaque MMDevice ID rather than the PnP
-          // namespace-qualified ID. Preserve the ID and verify the target class.
-          if (instance.StartsWith("{")) instance = "SWD\\MMDEVAPI\\" + instance;
-          if (!instance.StartsWith("SWD\\MMDEVAPI\\", StringComparison.OrdinalIgnoreCase)) throw new Exception("Unexpected audio endpoint device instance: " + instance);
-          uint node;
-          uint result = CM_Locate_DevNodeW(out node, instance, 0);
-          if (result != 0) throw new Exception("Locate recording endpoint failed: " + result);
-          Key classKey = new Key("a45c254e-df1c-4efd-8020-67d146a850e0", 10);
-          byte[] classBytes = new byte[16]; uint classSize = 16, classType;
-          result = CM_Get_DevNode_PropertyW(node, ref classKey, out classType, classBytes, ref classSize, 0);
-          if (result != 0 || classType != 13 || new Guid(classBytes) != new Guid("c166523c-fe0c-4a94-a586-f1a80cfbbf3e")) throw new Exception("Target is not an AudioEndpoint device; refusing rename.");
-          byte[] bytes = Encoding.Unicode.GetBytes("Micbridge Microphone (VB-CABLE)\0");
-          result = CM_Set_DevNode_PropertyW(node, ref friendly, 18, bytes, (uint)bytes.Length, 0);
-          if (result != 0) throw new Exception("Rename recording endpoint failed: " + result);
+          if (String.IsNullOrEmpty(instance)) throw new Exception("Recording endpoint has no identity; refusing rename.");
+          Policy policy = (Policy)new PolicyClient();
+          Value value = new Value { type = 31, text = Marshal.StringToCoTaskMemUni("Micbridge Microphone (VB-CABLE)") };
+          try { Marshal.ThrowExceptionForHR(policy.SetPropertyValue(instance, 0, ref friendly, ref value)); }
+          finally { PropVariantClear(ref value); Marshal.ReleaseComObject(policy); }
           renamed++;
         } finally {
           if (store != null) Marshal.ReleaseComObject(store);
