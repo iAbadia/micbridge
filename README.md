@@ -58,13 +58,13 @@ Visit the [project homepage](https://iabadia.github.io/micbridge/). See the [set
 
 | Platform | Current status | Audio routing |
 | --- | --- | --- |
-| **Windows desktop** | Local build and runtime tested | Desktop monitoring; independent virtual audio cable for use in other apps |
+| **Windows desktop** | Local build and runtime tested | Optional bundled VB-CABLE setup and automatic routing for use in other apps |
 | **Linux desktop** | Implemented; runtime unverified | PulseAudio / PipeWire compatibility using `pactl` and `pacat` |
 | **macOS desktop** | Builds pass CI; runtime unverified | An externally installed virtual audio device is required |
 | **iPhone / Safari** | User confirmed audible desktop monitoring | Foreground browser capture; locked-screen streaming is not reliable |
 | **Android browser** | Implemented; device unverified | Requires trusted HTTPS and microphone permission |
 
-Micbridge has no dependency on other microphone software. It does not install a Windows kernel driver. For meeting/recording apps on Windows, install an independent virtual audio cable and choose its playback endpoint under Desktop output, then its recording endpoint in the consuming app. A Micbridge-owned Windows virtual driver is implemented in the development source; its dedicated CI builds an unsigned package. Production signing and real Windows audio testing are still required before it can ship in normal installers. See the [driver documentation](native/windows-driver/README.md).
+Micbridge has no dependency on other microphone software. The Windows x64 installer includes optional setup of the Microsoft-signed **VB-CABLE** driver from VB-Audio. New installations use the display name **Micbridge Microphone (VB-CABLE)**; existing cables keep their names. Enable the Micbridge microphone, then select its recording endpoint in your meeting or recording app. VB-CABLE is separately licensed donationware with professional licensing requirements; it is not covered by Micbridge’s MIT license. See the [setup and licensing documentation](native/vb-cable/README.md). The earlier experimental Micbridge-owned driver is excluded from releases.
 
 ## Privacy and pairing
 
@@ -110,7 +110,7 @@ Release downloads can be built entirely on GitHub. See [the release workflow gui
 - Validate home-screen pairing persistence and recovery on real iPhones.
 - Test long-session latency, clock drift, and interruption recovery.
 - Move transmission toward compressed WebRTC/Opus audio.
-- Provide independent Windows virtual microphone installation.
+- Validate the bundled Windows virtual microphone with more conferencing applications.
 - Validate Linux and macOS routing and packaging.
 - Explore a lightweight native mobile companion for reliable locked-screen capture.
 - Add signed releases and a reviewed update path.

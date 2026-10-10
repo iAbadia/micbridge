@@ -1,0 +1,15 @@
+VB-CABLE — VB-Audio Software, copyright Vincent Burel.
+
+VB-CABLE is a separately licensed third-party virtual audio driver, not part
+of Micbridge's MIT license. Its original package is distributed unchanged.
+
+Origin and donations: https://vb-audio.com/Cable/
+VB-CABLE is donationware; all contributions are welcome. Users can donate
+or purchase a license directly from VB-Audio. Professional and organizational
+use/distribution may require paid licenses under the published terms.
+
+Terms: https://vb-audio.com/Services/licensing.htm
+The original package's readme.txt is included with the driver files.
+
+Micbridge uses the base VB-CABLE only, not the separately licensed A+B/C+D
+packages. A microphone display name does not change the driver publisher.

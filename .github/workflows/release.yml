@@ -67,6 +67,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: ./scripts/test-windows-installer.ps1
+      - name: Test signed VB-CABLE installation and microphone name
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/test-vb-cable-install.ps1
       - run: node scripts/release-assets.mjs
       - uses: actions/upload-artifact@v4
         with:

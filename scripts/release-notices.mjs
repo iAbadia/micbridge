@@ -31,4 +31,7 @@ for (const [source, name] of runtimeNotices) {
   if (!fs.existsSync(source)) throw new Error(`Required notice missing: ${source}`);
   fs.copyFileSync(source, `${target}/${name}`);
 }
+if (process.platform === 'win32') {
+  fs.copyFileSync('native/vb-cable/NOTICE.txt', `${target}/VB-CABLE-NOTICE.txt`);
+} else fs.rmSync(`${target}/VB-CABLE-NOTICE.txt`, { force: true });
 console.log(`Collected notices for ${inventory.length} production packages and bundled runtimes (${process.platform}).`);

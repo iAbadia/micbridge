@@ -1,5 +1,8 @@
 # Micbridge Windows virtual microphone
 
+This experimental implementation is retained for research only. Shipped Windows
+packages now use [VB-CABLE](../vb-cable/README.md); this unsigned driver is excluded.
+
 Development implementation; not yet a production-signed, hardware-validated driver.
 Windows 11 x64 is the initial target. The pinned Microsoft Simple Audio Sample
 provides PortCls/WaveRT endpoints. Micbridge replaces the generated test tone with

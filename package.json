@@ -1,6 +1,6 @@
 {
   "name": "micbridge",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "description": "Browser microphone streaming to a cross-platform desktop",
   "homepage": "https://iabadia.github.io/micbridge/",
@@ -62,12 +62,22 @@
         "portable"
       ],
       "icon": "assets/icon.ico",
+      "signExts": ["!VBCABLE_ControlPanel.exe", "!VBCABLE_Setup.exe", "!VBCABLE_Setup_x64.exe"],
       "extraResources": [
         {
-          "from": "native/windows-driver/package",
-          "to": "windows-driver",
+          "from": ".tools/vb-cable-package",
+          "to": "vb-cable",
           "filter": [
             "**/*"
+          ]
+        },
+        {
+          "from": "native/vb-cable",
+          "to": "vb-cable",
+          "filter": [
+            "*.ps1",
+            "*.cs",
+            "NOTICE.txt"
           ]
         }
       ]
@@ -83,7 +93,7 @@
       "shortcutName": "Micbridge",
       "license": "LICENSE",
       "deleteAppDataOnUninstall": false,
-      "include": "native/windows-driver/installer.nsh"
+      "include": "native/vb-cable/installer.nsh"
     },
     "portable": {
       "artifactName": "Micbridge-${version}-windows-${arch}-portable.${ext}"
@@ -107,6 +117,6 @@
       },
       "icon": "assets/icon.png"
     },
-    "beforePack": "./scripts/windows-driver-package.cjs"
+    "beforePack": "./scripts/windows-audio-package.cjs"
   }
 }

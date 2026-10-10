@@ -12,9 +12,16 @@ try {
   $setup = Start-Process -FilePath $installer -ArgumentList ('/S /currentuser /D=' + $installDir) -WindowStyle Hidden -Wait -PassThru
   if ($setup.ExitCode -ne 0) { throw "Installer failed: $($setup.ExitCode)" }
   if (Test-Path -LiteralPath (Join-Path $installDir 'resources/native')) { throw 'Retired native helper is still bundled.' }
-  foreach ($file in @($appExe, $uninstaller, (Join-Path $installDir 'resources/notices/MICBRIDGE-LICENSE.txt'))) {
+  foreach ($file in @($appExe, $uninstaller, (Join-Path $installDir 'resources/notices/MICBRIDGE-LICENSE.txt'),
+    (Join-Path $installDir 'resources/vb-cable/VBCABLE_Driver_Pack45.zip'),
+    (Join-Path $installDir 'resources/vb-cable/install.ps1'),
+    (Join-Path $installDir 'resources/vb-cable/endpoints.cs'))) {
     if (-not (Test-Path -LiteralPath $file)) { throw "Missing installed file: $file" }
   }
+  & (Join-Path $installDir 'resources/vb-cable/verify.ps1') -Archive (Join-Path $installDir 'resources/vb-cable/VBCABLE_Driver_Pack45.zip')
+  Add-Type -Path (Join-Path $installDir 'resources/vb-cable/endpoints.cs')
+  [void][MicbridgeCableEndpoints]::GetBaseMicrophoneCount()
+  if (Test-Path -LiteralPath (Join-Path $installDir 'resources/windows-driver')) { throw 'Experimental unsigned driver must not be bundled.' }
   $registration = @(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object {
     $_.DisplayName -eq "Micbridge $version" -and $_.UninstallString -and $_.UninstallString.Contains($uninstaller)
   })

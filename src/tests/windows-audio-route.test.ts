@@ -1,6 +1,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { routeWindowsAudio } from '../shared/windows-audio-route.js';
+import { routeWindowsAudio, findVbCableOutput } from '../shared/windows-audio-route.js';
+test('VB-CABLE selection excludes default speakers, capture, extra cables and 16-channel output', () => {
+  const device = (deviceId: string, label: string, kind = 'audiooutput') => ({ deviceId, label, kind });
+  const wrong = [device('default', 'CABLE Input (VB-Audio Virtual Cable)'),
+    device('communications', 'CABLE Input (VB-Audio Virtual Cable)'),
+    device('speakers', 'Speakers'), device('mic', 'CABLE Output (VB-Audio Virtual Cable)', 'audioinput'),
+    device('extra', 'CABLE-A Input (VB-Audio Cable A)'), device('sixteen', 'CABLE In 16 Ch (VB-Audio Virtual Cable)')];
+  assert.equal(findVbCableOutput(wrong), undefined);
+  const cable = device('cable', 'CABLE Input (VB-Audio Virtual Cable)');
+  assert.equal(findVbCableOutput([...wrong, cable]), cable);
+});
 test('Windows microphone switches silently, clears queued audio, then resumes', async () => {
   const calls: string[] = [];
   await routeWindowsAudio({ suspend: async () => { calls.push('suspend'); },
