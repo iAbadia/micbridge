@@ -19,7 +19,14 @@ if (process.argv.includes('--checksums')) {
   const arch = process.env.RELEASE_ARCH;
   const extensions = { windows: ['.exe'], linux: ['.AppImage', '.deb'], macos: ['.dmg'] }[platform];
   if (!extensions || !['x64', 'arm64'].includes(arch)) throw new Error('Specify RELEASE_PLATFORM and RELEASE_ARCH');
-  for (const ext of extensions) {
+  if (platform === 'windows') {
+    for (const kind of ['setup', 'portable']) {
+      const name = `Micbridge-${version}-windows-${arch}-${kind}.exe`;
+      if (!fs.existsSync(path.join('release', name))) throw new Error(`Missing Windows ${kind} package: ${name}`);
+      fs.copyFileSync(path.join('release', name), path.join(target, name));
+    }
+  }
+  for (const ext of platform === 'windows' ? [] : extensions) {
     const candidates = fs.readdirSync('release').filter(name => name.endsWith(ext));
     if (candidates.length !== 1) throw new Error(`Expected one ${ext} package, found ${candidates.length}`);
     fs.copyFileSync(path.join('release', candidates[0]), path.join(target, `Micbridge-${version}-${platform}-${arch}${ext}`));

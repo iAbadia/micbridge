@@ -4,6 +4,8 @@ The **Release packages** workflow builds Windows x64, Linux x64, macOS Apple Sil
 
 ## Try the workflow without creating a release
 
+Windows artifacts contain both `*-setup.exe` (installation wizard) and `*-portable.exe` (run without installing). The setup wizard lets users select installation for themselves or all users and choose the destination folder. All-users installation requires administrator approval. It creates desktop and Start menu shortcuts and registers an uninstaller; uninstalling preserves phone pairing, certificates, and other app data.
+
 In GitHub, open **Actions → Release packages → Run workflow**, select `main`, and leave **Create a draft release** unchecked. The four platform downloads appear as workflow artifacts. This is also useful for testing packaging changes before tagging.
 
 ## Prepare a new version

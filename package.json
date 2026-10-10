@@ -57,7 +57,7 @@
       }
     ],
     "win": {
-      "target": "portable",
+      "target": ["nsis", "portable"],
       "extraResources": [
         {
           "from": "native/bin",
@@ -68,6 +68,21 @@
         }
       ],
       "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "artifactName": "Micbridge-${version}-windows-${arch}-setup.${ext}",
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Micbridge",
+      "license": "LICENSE",
+      "deleteAppDataOnUninstall": false
+    },
+    "portable": {
+      "artifactName": "Micbridge-${version}-windows-${arch}-portable.${ext}"
     },
     "linux": {
       "maintainer": "Iñaki Abadia <iAbadia@users.noreply.github.com>",

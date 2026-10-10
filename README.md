@@ -25,6 +25,8 @@ Micbridge streams your phone's microphone to a desktop on the same local network
 
 Download the [Windows preview](https://github.com/iAbadia/micbridge/releases/tag/v0.3.0) and run the portable executable. It is unsigned; Windows may show a SmartScreen warning. The phone app is served by the desktop, so no separate phone download is needed.
 
+Future GitHub builds include a Windows **setup** executable with an installation wizard and a separate **portable** executable. On macOS, open the DMG and drag the app into Applications. On Linux, install the `.deb` using your package manager, or make the AppImage executable and run it.
+
 ### Run from source
 
 Use Node.js 24 LTS and npm. The Windows native adapter is optional during development; build it separately if you need the existing-driver route.
