@@ -49,6 +49,12 @@
       "assets/**/*",
       "LICENSE"
     ],
+    "extraResources": [
+      {
+        "from": "release/notices",
+        "to": "notices"
+      }
+    ],
     "win": {
       "target": "portable",
       "extraResources": [
@@ -58,10 +64,6 @@
           "filter": [
             "Micbridge.Driver.exe"
           ]
-        },
-        {
-          "from": "release/notices",
-          "to": "notices"
         }
       ],
       "icon": "assets/icon.ico"

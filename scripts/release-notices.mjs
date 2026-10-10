@@ -4,6 +4,10 @@ import path from 'node:path';
 // Collect the licenses shipped with the locked production dependencies.
 const target = 'release/notices';
 const dotnetRoot = process.env.DOTNET_ROOT || '.tools/dotnet';
+// Do not carry Windows runtime notices into a later build for another platform.
+for (const name of ['DOTNET-LICENSE.txt', 'DOTNET-THIRD-PARTY-NOTICES.txt']) {
+  fs.rmSync(path.join(target, name), { force: true });
+}
 fs.mkdirSync(target, { recursive: true });
 const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
 const inventory = [];
@@ -19,14 +23,17 @@ for (const [location, entry] of Object.entries(lock.packages)) {
 }
 fs.writeFileSync(`${target}/DEPENDENCIES.json`, JSON.stringify(inventory, null, 2) + '\n');
 fs.writeFileSync(`${target}/NODE-LICENSES.txt`, notices);
-for (const [source, name] of [
+const runtimeNotices = [
   ['LICENSE', 'MICBRIDGE-LICENSE.txt'],
   ['node_modules/electron/dist/LICENSE', 'ELECTRON-LICENSE.txt'],
   ['node_modules/electron/dist/LICENSES.chromium.html', 'CHROMIUM-LICENSES.html'],
+];
+if (process.platform === 'win32') runtimeNotices.push(
   [path.join(dotnetRoot, 'LICENSE.txt'), 'DOTNET-LICENSE.txt'],
   [path.join(dotnetRoot, 'ThirdPartyNotices.txt'), 'DOTNET-THIRD-PARTY-NOTICES.txt'],
-]) {
+);
+for (const [source, name] of runtimeNotices) {
   if (!fs.existsSync(source)) throw new Error(`Required notice missing: ${source}`);
   fs.copyFileSync(source, `${target}/${name}`);
 }
-console.log(`Collected notices for ${inventory.length} production packages, Electron/Chromium, and .NET.`);
+console.log(`Collected notices for ${inventory.length} production packages and bundled runtimes (${process.platform}).`);

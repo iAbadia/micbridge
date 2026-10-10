@@ -104,6 +104,8 @@ Set `DOTNET_ROOT` to the installed SDK directory when generating Windows notices
 
 ## Roadmap
 
+Release downloads can be built entirely on GitHub. See [the release workflow guide](docs/RELEASING.md) for tag-triggered builds and draft releases.
+
 - Validate home-screen pairing persistence and recovery on real iPhones.
 - Test long-session latency, clock drift, and interruption recovery.
 - Move transmission toward compressed WebRTC/Opus audio.
