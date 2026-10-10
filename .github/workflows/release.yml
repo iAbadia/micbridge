@@ -70,6 +70,10 @@ jobs:
         run: dotnet publish native/Micbridge.Driver/Micbridge.Driver.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o native/bin
       - run: node scripts/release-notices.mjs
       - run: npm run ${{ matrix.command }} -- --${{ matrix.arch }}
+      - name: Test Windows installation and uninstall
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/test-windows-installer.ps1
       - run: node scripts/release-assets.mjs
       - uses: actions/upload-artifact@v4
         with:
