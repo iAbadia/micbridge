@@ -1,0 +1,27 @@
+node_modules/
+dist/
+release/
+.tools/
+.micbridge/
+.micbridge-usability/
+analysis/recovered/
+other microphone software-evidence.json
+web/*.js
+web/*.js.map
+!web/capture-worklet.js
+!web/playback-worklet.js
+!web/setup.js
+native/bin/
+native/**/obj/
+native/**/bin/
+analysis/*.log
+/analysis/
+/README.previous.tmp
+*.pem
+*.key
+*.pfx
+*.p12
+*.wav
+.env
+.env.*
+!.env.example

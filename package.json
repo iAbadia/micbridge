@@ -1,0 +1,84 @@
+{
+  "name": "micbridge",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Browser microphone streaming to a cross-platform desktop",
+  "author": "Iñaki Abadia",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iAbadia/micbridge.git"
+  },
+  "type": "module",
+  "main": "dist/desktop/main.js",
+  "scripts": {
+    "build": "node scripts/build-icons.mjs && tsc && tsc -p tsconfig.web.json && node scripts/build-web.mjs",
+    "start": "npm run build && electron .",
+    "serve": "npm run build && node dist/server/cli.js",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "package": "npm run build && electron-builder --dir",
+    "dist:win": "npm run build && electron-builder --win --publish never",
+    "dist:linux": "npm run build && electron-builder --linux --publish never",
+    "dist:mac": "npm run build && electron-builder --mac --publish never"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4",
+    "selfsigned": "^5.2.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/ws": "^8.18.1",
+    "electron": "^41.0.0",
+    "electron-builder": "^26.0.0",
+    "esbuild": "^0.25.0",
+    "sharp": "^0.35.5",
+    "typescript": "^5.9.0"
+  },
+  "build": {
+    "appId": "local.micbridge.desktop",
+    "productName": "Micbridge",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "web/**/*",
+      "package.json",
+      "assets/**/*",
+      "LICENSE"
+    ],
+    "win": {
+      "target": "portable",
+      "extraResources": [
+        {
+          "from": "native/bin",
+          "to": "native",
+          "filter": [
+            "Micbridge.Driver.exe"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Audio",
+      "icon": "assets/icon.png"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.music",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "List audio devices for microphone routing."
+      },
+      "icon": "assets/icon.png"
+    }
+  }
+}
