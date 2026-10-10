@@ -34,4 +34,6 @@ if ([MicbridgeCableEndpoints]::GetMicrophoneNames()[0] -ne 'Micbridge Microphone
 if ([MicbridgeCableEndpoints]::RenameMicrophone() -ne 1) { throw 'Repeat rename must be idempotent.' }
 $reuse = Start-Process -FilePath 'powershell.exe' -ArgumentList ('-NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + (Join-Path $directory 'install.ps1') + '"') -WindowStyle Hidden -Wait -PassThru
 if ($reuse.ExitCode -ne 0) { throw 'Existing-driver reuse failed.' }
+Add-Type -Path 'scripts/windows-audio-roundtrip.cs'
+Write-Output ([CableRoundtrip]::Run())
 Write-Output 'Verified: fresh signed driver installation, started PnP device, recording endpoint, persistent display name, repeat rename and existing-driver reuse.'
