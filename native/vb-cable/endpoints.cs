@@ -75,7 +75,11 @@ public static class MicbridgeCableEndpoints {
           names.Add(name);
           if (!rename) { renamed++; continue; }
           if (name == "Micbridge Microphone (VB-CABLE)") { renamed++; continue; }
-          string instance = Read(store, new Key("78c34fc8-104a-4aca-9ea4-524d52996e57", 256));
+          IntPtr identifier;
+          Marshal.ThrowExceptionForHR(device.GetId(out identifier));
+          string instance;
+          try { instance = Marshal.PtrToStringUni(identifier); }
+          finally { Marshal.FreeCoTaskMem(identifier); }
           // Core Audio can return the opaque MMDevice ID rather than the PnP
           // namespace-qualified ID. Preserve the ID and verify the target class.
           if (instance.StartsWith("{")) instance = "SWD\\MMDEVAPI\\" + instance;
