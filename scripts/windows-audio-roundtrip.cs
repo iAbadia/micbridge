@@ -42,7 +42,7 @@ public static class CableRoundtrip {
       Caps caps;
       uint result = input ? waveInGetDevCapsW(new UIntPtr(index), out caps, 80)
         : waveOutGetDevCapsW(new UIntPtr(index), out caps, 84);
-      if (result == 0 && caps.name != null && caps.name.StartsWith(input ? "Micbridge Microphone (VB-CABLE)" : "CABLE Input", StringComparison.OrdinalIgnoreCase)) return index;
+      if (result == 0 && caps.name != null && caps.name.StartsWith(input ? "Micbridge Microphone" : "CABLE Input", StringComparison.OrdinalIgnoreCase)) return index;
     }
     throw new Exception("Expected VB-CABLE " + (input ? "recording" : "playback") + " endpoint not found; refusing default-device fallback.");
   }
@@ -73,14 +73,17 @@ public static class CableRoundtrip {
       if (header.recorded < 192000) throw new Exception("Capture returned insufficient audio: " + header.recorded);
       var captured = new short[header.recorded / 2];
       Marshal.Copy(destination, captured, 0, captured.Length);
-      double energy = 0; int peak = 0, crossings = 0, nonzero = 0;
-      for (int index = 0; index < captured.Length; index++) {
+      double energy = 0; int peak = 0, crossings = 0, nonzero = 0; bool negative = false;
+      // Measure one stereo channel with hysteresis. Resampling can create tiny
+      // +/-1 samples around silence; those are not actual 1 kHz signal cycles.
+      for (int index = 0; index < captured.Length; index += 2) {
         int sample = captured[index]; energy += (double)sample * sample;
         peak = Math.Max(peak, Math.Abs(sample));
         if (Math.Abs(sample) > 100) nonzero++;
-        if (index > 0 && captured[index - 1] < 0 && sample >= 0) crossings++;
+        if (sample < -2000) negative = true;
+        if (negative && sample > 2000) { crossings++; negative = false; }
       }
-      double rms = Math.Sqrt(energy / captured.Length) / 32768;
+      double rms = Math.Sqrt(energy / (captured.Length / 2)) / 32768;
       if (rms < 0.08 || peak < 8000 || nonzero < 30000 || crossings < 800 || crossings > 1300)
         throw new Exception("PCM roundtrip did not preserve the expected tone: RMS=" + rms + ", peak=" + peak + ", crossings=" + crossings);
       return "VB-CABLE PCM roundtrip passed: 48 kHz stereo, RMS=" + rms.ToString("F3") + ", peak=" + peak + ", 1 kHz cycles=" + crossings;

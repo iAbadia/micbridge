@@ -33,7 +33,7 @@ try {
     if (-not $renamed) { Start-Sleep -Seconds 1 }
   }
   if (-not $renamed) { Write-Output 'Microphone display name unchanged. Restart Windows; use Rename virtual microphone from Micbridge if needed.' }
-  else { Write-Output 'Microphone display name: Micbridge Microphone (VB-CABLE).' }
+  else { Write-Output 'Microphone display name: Micbridge Microphone (VB-Audio Virtual Cable).' }
   if (-not $RenameOnly) { Write-Output 'Restart Windows to finalize VB-CABLE setup. Check your default speakers and microphone in Windows Sound settings.'; exit 3010 }
   exit 0
 } catch { Write-Error $_ -ErrorAction Continue; exit 1 }

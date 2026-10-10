@@ -136,11 +136,11 @@ public static class MicbridgeCableEndpoints {
           if (publisher != "VB-Audio Virtual Cable") continue;
           names.Add(name);
           if (!rename) { renamed++; continue; }
-          if (name == "Micbridge Microphone (VB-CABLE)") { renamed++; continue; }
+          if (name == "Micbridge Microphone (VB-Audio Virtual Cable)") { renamed++; continue; }
           string instance = Id(device);
           if (String.IsNullOrEmpty(instance)) throw new Exception("Recording endpoint has no identity; refusing rename.");
           Policy policy = (Policy)new PolicyClient();
-          Value value = new Value { type = 31, text = Marshal.StringToCoTaskMemUni("Micbridge Microphone (VB-CABLE)") };
+          Value value = new Value { type = 31, text = Marshal.StringToCoTaskMemUni("Micbridge Microphone") };
           // The display-friendly key is computed and read-only. Windows' rename
           // operation changes the endpoint description used to build that name.
           Key description = new Key("a45c254e-df1c-4efd-8020-67d146a850e0", 2);

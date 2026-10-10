@@ -6,7 +6,7 @@ information. No other microphone software installation or Windows test-signing i
 
 Complete the official VB-Audio setup when prompted, restart Windows, then click
 **Enable Micbridge microphone**. A fresh installation receives the display name
-**Micbridge Microphone (VB-CABLE)**. Existing installations retain their names;
+**Micbridge Microphone (VB-Audio Virtual Cable)**. Existing installations retain their names;
 select their recording endpoint, usually **CABLE Output**, in the consuming app.
 An optional rename button is available in Micbridge. The shared VB-CABLE remains
 installed when Micbridge is removed.

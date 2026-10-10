@@ -11,13 +11,14 @@ VB-CABLE is separately licensed donationware; see [NOTICE.txt](NOTICE.txt) and
 2. Approve Windows' administrator prompt and complete the official VB-Audio setup.
 3. Restart Windows. Check that your normal speakers remain the default playback device.
 4. Pair the phone, start capture, and click **Enable Micbridge microphone**.
-5. Select **Micbridge Microphone (VB-CABLE)** in your meeting/recording app.
+5. Select **Micbridge Microphone (VB-Audio Virtual Cable)** in your meeting/recording app.
    An existing cable keeps its name, usually **CABLE Output (VB-Audio Virtual Cable)**.
 
 The app provides **Set up virtual microphone** and **Rename microphone** buttons.
 Setup is also available through the Start menu. Renaming is optional and applies
-only to the base cable's recording endpoint through the Windows endpoint property
-store. It does not change the driver publisher, INF, catalog, or signed binaries.
+only to the base cable's recording endpoint through Windows’ internal audio policy interface (Windows 10/11).
+If a future Windows version rejects that interface, the name can be changed
+in Windows Sound settings without modifying the driver. It does not change the driver publisher, INF, catalog, or signed binaries.
 The playback endpoint retains its CABLE Input name for automatic routing.
 
 Existing VB-CABLE installations are reused. If the user renamed the playback
