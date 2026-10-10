@@ -63,6 +63,13 @@ jobs:
           Copy-Item .tools/micbridge-driver/LICENSE driver-artifact/MS-PL.txt
           Copy-Item native/windows-driver/README.md driver-artifact/README.md
           Copy-Item MicbridgeDriverSetup.exe driver-artifact/
+          Copy-Item LICENSE driver-artifact/MICBRIDGE-LICENSE.txt
+          Copy-Item native/windows-driver/install.ps1 driver-artifact/
+          "Micbridge commit: $env:GITHUB_SHA`nMicrosoft framework: 2dc3fd3a0cc84a2933f2194e7ec0871584979071`nUnsigned development build; not for normal Windows installation." | Set-Content driver-artifact/BUILD.txt
+          Get-ChildItem driver-artifact -File | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          } | Set-Content driver-artifact/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
           name: micbridge-windows-driver-x64-development-unsigned

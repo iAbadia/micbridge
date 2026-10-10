@@ -107,6 +107,18 @@ let playbackContext: AudioContext | null = null, playback: AudioWorkletNode | nu
 let outputEnabled = false;
 let receiverPlatform = '';
 let windowsVirtualEnabled = false;
+let audioOperationRunning = false;
+async function audioOperation(action: () => Promise<void>) {
+  if (audioOperationRunning) return;
+  audioOperationRunning = true;
+  const controls = ['windows-virtual', 'output', 'devices', 'device'].map(id => byId<HTMLButtonElement | HTMLSelectElement>(id));
+  controls.forEach(control => { control.disabled = true; });
+  try { await action(); byId('error').textContent = ''; }
+  catch (error) {
+    if (receiverPlatform === 'win32' && !windowsVirtualEnabled) byId('windows-virtual-status').textContent = 'Not active';
+    showError(error);
+  } finally { audioOperationRunning = false; controls.forEach(control => { control.disabled = false; }); }
+}
 async function enableWindowsMicrophone() {
   if (windowsVirtualEnabled) {
     if (outputEnabled) await enableOutput();
@@ -243,9 +255,9 @@ if (phone) {
   byId('new-code').onclick = () => send({ type: 'newCode' });
   byId('rotate').onclick = () => send({ type: 'rotate' });
   byId('virtual').onclick = () => send({ type: 'virtualMic', enabled: currentState?.virtualMic !== 'Active' });
-  byId('windows-virtual').onclick = () => { const button = byId<HTMLButtonElement>('windows-virtual'); button.disabled = true; void enableWindowsMicrophone().catch(showError).finally(() => { button.disabled = false; }); };
-  byId('output').onclick = () => { void enableOutput().catch(showError); };
-  byId('devices').onclick = () => void listDevices();
+  byId('windows-virtual').onclick = () => void audioOperation(enableWindowsMicrophone);
+  byId('output').onclick = () => void audioOperation(enableOutput);
+  byId('devices').onclick = () => void audioOperation(listDevices);
   byId<HTMLSelectElement>('device').onchange = () => {
     if (!playbackContext) { showError('Enable audio output before selecting a device.'); return; }
     const ctx = playbackContext as AudioContext & { setSinkId?: (device: string) => Promise<void> };

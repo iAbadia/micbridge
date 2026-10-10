@@ -53,3 +53,29 @@ cannot install a driver automatically; use the setup wizard once.
 The unsigned development artifact is never automatically bundled or published as
 a working production driver. v0.3.1 remains available with external-cable routing
 until signing and real Windows audio validation are complete.
+
+Driver installation is system-wide even if the desktop app is installed for one
+user. App uninstall leaves the driver installed so other users' installations keep
+working. To remove it explicitly, run the setup tool's `remove` command as an
+administrator. This removes only the Micbridge devnode; the signed package may
+remain in Windows' Driver Store.
+
+## Signing handoff
+
+1. Register an organization for Microsoft's Windows Hardware Developer Program.
+   Microsoft currently requires an EV code-signing certificate for registration,
+   an Entra administrator, organization verification, and a legal contact.
+2. Complete disposable-machine audio and Driver Verifier testing before requesting
+   a production signature. Prepare the hardware submission using the program's
+   current requirements; passing this CI is not Windows certification.
+3. Submit the reviewed package through Partner Center and obtain the signed files.
+4. Stage those files with the verification script and build/test the setup wizard
+   on a clean Windows machine with normal security settings before publishing.
+
+No account enrollment, purchases, agreement acceptance, or security configuration
+changes are performed by the repository's tooling. Keep certificate private keys
+and signing credentials outside the repository.
+
+References: [Microsoft registration requirements](https://learn.microsoft.com/en-us/windows-hardware/drivers/dashboard/hardware-program-register),
+[driver signing](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/windows-driver-signing-tutorial),
+[Microsoft audio driver framework](https://github.com/microsoft/Windows-driver-samples/tree/2dc3fd3a0cc84a2933f2194e7ec0871584979071/audio/simpleaudiosample).
