@@ -13,7 +13,7 @@
 - [x] Initialize a local Git repository on main and inspect the 43 files staged for the first commit.
 - [x] Add ignore rules for installed/recovered investigation material, local screenshots, generated builds, certificates, app data, and recordings. Preserve investigation material privately.
 - [x] Verify staged source excludes investigation/build/app-data paths and private key/audio artifacts; inspect the public banner. Before adding release screenshots, sanitize them separately.
-- [ ] Include third-party notices for dependencies and the bundled Electron/.NET runtimes in release distributions.
+- [x] Include third-party notices for dependencies and the bundled Electron/.NET runtimes in the Windows preview distribution.
 - [ ] Enable a private security reporting channel before publishing SECURITY.md contact instructions.
 - [x] Add issue templates and MIT contribution instructions.
 
@@ -23,12 +23,12 @@
 - [ ] Test fresh-machine Windows monitoring and an independently installed virtual audio cable. The current native adapter depends on an existing other microphone software V2 driver; its binary is not supplied.
 - [ ] Review the adapter's provenance and dependency before distributing it publicly. Exclude third-party proprietary binaries, models, and artwork.
 - [ ] Validate iPhone profile installation and persistent pairing inside the home-screen app, including reopen/reboot and revoked cookies.
-- [ ] Disclose Safari screen-lock interruption prominently.
+- [x] Disclose Safari screen-lock interruption prominently in README and release notes.
 - [ ] Validate Linux audio module cleanup and macOS virtual output routing on actual hosts.
-- [ ] Run the build matrix on GitHub; local configuration does not prove remote builds succeed.
+- [x] Run the initial build matrix on GitHub: Windows, Linux, and macOS passed for 999c0ff. Release preparation changes require their own CI run.
 - [x] Add pull-request CI, read-only workflow permissions, and a bounded build matrix.
 - [ ] Add release checksums and a dependency/license report.
-- [ ] Decide whether the first Windows release is explicitly unsigned or obtain code signing. Treat macOS signing/notarization separately.
+- [x] Disclose the first Windows preview as explicitly unsigned. Treat macOS signing/notarization separately.
 - [ ] Tag the reviewed release and upload built artifacts after the repository and license are approved.
 
 The README's artwork is original project branding and contains no local credentials. Screenshots under analysis are local testing evidence and should remain outside the public repository.

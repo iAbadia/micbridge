@@ -58,9 +58,13 @@
           "filter": [
             "Micbridge.Driver.exe"
           ]
+        },
+        {
+          "from": "release/notices",
+          "to": "notices"
         }
       ],
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.ico"
     },
     "linux": {
       "target": [

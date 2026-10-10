@@ -23,6 +23,8 @@ Micbridge streams your phone's microphone to a desktop on the same local network
 
 ## Get started
 
+Download the [Windows preview](https://github.com/iAbadia/micbridge/releases/tag/v0.3.0) and run the portable executable. It is unsigned; Windows may show a SmartScreen warning. The phone app is served by the desktop, so no separate phone download is needed.
+
 ### Run from source
 
 Use Node.js 24 LTS and npm. The Windows native adapter is optional during development; build it separately if you need the existing-driver route.
@@ -94,10 +96,11 @@ For Windows packaging, publish the optional adapter first:
 
 ```sh
 dotnet publish native/Micbridge.Driver/Micbridge.Driver.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o native/bin
+node scripts/release-notices.mjs
 npm run dist:win
 ```
 
-Build Linux/macOS packages on their respective hosts with `npm run dist:linux` or `npm run dist:mac`. The CI matrix is configured, but its remote builds have not yet been verified. Current preview binaries are unsigned.
+Set `DOTNET_ROOT` to the installed SDK directory when generating Windows notices (the script defaults to `.tools/dotnet`). Build Linux/macOS packages on their respective hosts with `npm run dist:linux` or `npm run dist:mac`. CI builds do not replace audio routing tests on actual hardware. Current preview binaries are unsigned.
 
 ## Roadmap
 
