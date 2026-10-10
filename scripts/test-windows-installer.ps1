@@ -15,7 +15,7 @@ try {
     if (-not (Test-Path -LiteralPath $file)) { throw "Missing installed file: $file" }
   }
   $registration = @(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object {
-    $_.DisplayName -eq 'Micbridge' -and $_.InstallLocation.TrimEnd('\') -eq $installDir.TrimEnd('\')
+    $_.DisplayName -eq "Micbridge $version" -and $_.UninstallString -and $_.UninstallString.Contains($uninstaller)
   })
   if ($registration.Count -ne 1) { throw 'Per-user uninstaller registration not found.' }
   $desktopShortcut = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Micbridge.lnk'
@@ -33,7 +33,7 @@ try {
     for ($attempt = 0; $attempt -lt 30 -and (Test-Path -LiteralPath $appExe); $attempt++) { Start-Sleep -Seconds 1 }
     if (Test-Path -LiteralPath $appExe) { throw 'Uninstaller did not remove the installed executable.' }
     $remaining = @(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object {
-      $_.DisplayName -eq 'Micbridge' -and $_.InstallLocation.TrimEnd('\') -eq $installDir.TrimEnd('\')
+      $_.DisplayName -eq "Micbridge $version" -and $_.UninstallString -and $_.UninstallString.Contains($uninstaller)
     })
     if ($remaining.Count) { throw 'Uninstaller registration remains after uninstall.' }
     Write-Output 'Uninstall verified: executable and per-user registration removed.'
