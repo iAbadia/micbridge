@@ -4,21 +4,31 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#10181d" />
-    <title>Micbridge — Your phone. Your microphone.</title>
+    <title>Micbridge — Use your phone as a PC microphone</title>
     <meta
       name="description"
-      content="Send your phone's microphone to your desktop over your local network. An open-source desktop app with browser capture, gain controls, monitoring, and recording."
+      content="Use your iPhone as a Windows PC microphone over Wi-Fi. Open-source desktop app, no phone app, optional VB-CABLE setup, gain controls and WAV recording."
     />
     <meta
       property="og:title"
-      content="Micbridge — Your phone. Your microphone."
+      content="Micbridge — Use your phone as a PC microphone"
     />
     <meta
       property="og:description"
-      content="A browser on your phone. Your voice on your desktop. Free and open source."
+      content="Use your phone as a PC microphone over Wi-Fi. Open source, no phone app, and optional Windows virtual microphone setup."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://iabadia.github.io/micbridge/" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Micbridge — Use your phone as a PC microphone" />
+    <meta name="twitter:description" content="Open-source phone microphone for Windows. No phone app. Pair once and stream over your local network." />
+    <meta name="twitter:image" content="https://iabadia.github.io/micbridge/assets/social-card.png" />
+    <meta property="og:image" content="https://iabadia.github.io/micbridge/assets/social-card.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Micbridge: your phone as a PC microphone. Open source. No phone app." />
+    <meta property="og:site_name" content="Micbridge" />
     <link rel="canonical" href="https://iabadia.github.io/micbridge/" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link
@@ -30,6 +40,7 @@
     />
     <link rel="stylesheet" href="style.css" />
     <script src="app.js" defer></script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Micbridge","url":"https://iabadia.github.io/micbridge/","applicationCategory":"MultimediaApplication","operatingSystem":"Windows, macOS, Linux","softwareVersion":"0.4.0","description":"Open-source desktop app that streams a phone browser microphone over the local network. Windows virtual microphone output uses optional separately licensed VB-CABLE.","license":"https://github.com/iAbadia/micbridge/blob/main/LICENSE","author":{"@type":"Person","name":"Iñaki Abadia"},"downloadUrl":"https://github.com/iAbadia/micbridge/releases/tag/v0.4.0"}</script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -57,8 +68,9 @@
           </p>
           <h1 id="hero-title">Your phone.<br />Your microphone.</h1>
           <p class="hero-description">
-            Bring your voice to your desktop. Open a browser on your phone,
-            connect over Wi-Fi, and make yourself heard.
+            Use your phone as a PC microphone over Wi-Fi. Open Safari on your
+            iPhone, connect to Micbridge, and send your voice to a Windows
+            meeting or recording app. No phone app to install.
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#download"
@@ -435,7 +447,7 @@
           </article>
         </div>
         <p class="download-note">
-          Windows monitoring has been tested with iPhone/Safari. Linux and macOS
+          Windows installation and virtual microphone output have been tested with iPhone/Safari. Linux and macOS
           builds pass CI; audio routing on real hardware still needs validation.
           Android capture also needs device testing.
           <a href="https://github.com/iAbadia/micbridge/releases/tag/v0.4.0"
@@ -466,13 +478,13 @@
           <details>
             <summary>Can I use it in a meeting or recording app?</summary>
             <p>
-              Yes, with an audio route. On Windows, install an independent
-              virtual audio cable, choose its playback endpoint in Micbridge’s
-              Desktop output, and select its recording endpoint as the
-              microphone in the other app. macOS uses a virtual audio device;
-              Linux offers a PulseAudio/PipeWire-compatible route. No other
-              phone microphone application is required. An integrated Windows
-              virtual driver is not yet included.
+              Yes. The Windows installer includes optional signed VB-CABLE
+              setup. Click “Enable Micbridge microphone”, then select
+              “Micbridge Microphone (VB-Audio Virtual Cable)” in your meeting
+              or recording app. Existing cables may retain the name “CABLE
+              Output”. macOS requires a virtual audio device; Linux offers a
+              PulseAudio/PipeWire-compatible route. These two desktop routes
+              still need hardware validation. No other microphone software installation is required.
             </p>
           </details>
           <details>
@@ -510,7 +522,11 @@
             <p>
               Yes. Micbridge is MIT licensed, including commercial use. Preserve
               the copyright and license notice when distributing it. Third-party
-              dependencies retain their own licenses.
+              dependencies retain their own licenses. The bundled VB-CABLE
+              driver is separately licensed donationware; professional or
+              organizational use may require a paid VB-Audio license. The bundled VB-CABLE
+              driver is separately licensed donationware; professional or
+              organizational use may require a paid VB-Audio license.
             </p>
           </details>
         </div>
@@ -529,7 +545,11 @@
       >
       <p>Created by Iñaki Abadia.<br />© 2026 · MIT licensed</p>
       <div>
-        <a href="https://github.com/iAbadia/micbridge">Source code</a
+        <a href="other microphone software-alternative.html">other microphone software alternative</a
+        ><a href="iphone-as-pc-microphone.html">iPhone setup guide</a
+        ><a href="other microphone software-alternative.html">other microphone software alternative</a
+        ><a href="iphone-as-pc-microphone.html">iPhone setup guide</a
+        ><a href="https://github.com/iAbadia/micbridge">Source code</a
         ><a href="https://github.com/iAbadia/micbridge/issues"
           >Report an issue</a
         ><a href="https://github.com/iAbadia/micbridge/blob/main/LICENSE"

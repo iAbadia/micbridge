@@ -843,3 +843,25 @@ body[data-motion="paused"] .signal-pulse {
     transform: none;
   }
 }
+.guide { padding-top: 64px; padding-bottom: 80px; }
+.guide article { max-width: 900px; margin: auto; }
+.guide h1 { font-size: clamp(38px, 6vw, 68px); max-width: 20ch; margin: 18px 0 30px; }
+.guide h2 { font-size: clamp(26px, 4vw, 36px); margin: 48px 0 20px; }
+.guide p, .guide li { color: var(--muted); }
+.guide p + p { margin-top: 20px; }
+.guide .guide-lead { color: var(--text); font-size: 21px; margin-bottom: 24px; }
+.guide .guide-eyebrow { color: var(--accent); font-size: 12px; letter-spacing: .12em; }
+.guide ul, .guide ol { padding-left: 24px; max-width: 75ch; }
+.guide li + li { margin-top: 14px; }
+.guide strong, .guide a { color: var(--text); }
+.guide code { overflow-wrap: anywhere; }
+.guide-table { overflow-x: auto; margin-bottom: 22px; border: 1px solid var(--line); border-radius: 12px; }
+.guide table { width: 100%; border-collapse: collapse; min-width: 620px; }
+.guide caption { text-align: left; padding: 18px; font-size: 13px; color: var(--muted); }
+.guide th, .guide td { padding: 18px; text-align: left; vertical-align: top; border-top: 1px solid var(--line); }
+.guide td { color: var(--muted); width: 38%; }
+.guide th { font-weight: 650; }
+.guide thead { background: var(--panel); }
+.guide-cta { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; margin-top: 42px; }
+.guide-note { font-size: 13px; margin-top: 32px; }
+.site-footer > div { flex-wrap: wrap; }

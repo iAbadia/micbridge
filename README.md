@@ -8,7 +8,7 @@
 
 Micbridge streams your phone's microphone to a desktop on the same local network. The phone runs a browser app; the desktop receives audio, provides listening and recording controls, and can route it to an available virtual microphone.
 
-> **Early preview · 0.3.1** — Windows desktop monitoring has been tested with an iPhone. Linux/macOS builds pass CI; audio routing still needs hardware validation. Safari screen locking can interrupt streaming; keep the phone app open and the screen awake.
+> **Release · 0.4.0** — Windows installation and virtual microphone output have been tested with an iPhone. Linux/macOS builds pass CI; audio routing still needs hardware validation. Safari screen locking can interrupt streaming; keep the phone app open and the screen awake.
 
 ## Make the microphone you already own useful
 
@@ -23,7 +23,7 @@ Micbridge streams your phone's microphone to a desktop on the same local network
 
 ## Get started
 
-Download the [Windows preview](https://github.com/iAbadia/micbridge/releases/tag/v0.3.1) and choose the setup wizard or portable executable. It is unsigned; Windows may show a SmartScreen warning. The phone app is served by the desktop, so no separate phone download is needed.
+Download the [Windows release](https://github.com/iAbadia/micbridge/releases/tag/v0.4.0) and choose the setup wizard or portable executable. It is unsigned; Windows may show a SmartScreen warning. The phone app is served by the desktop, so no separate phone download is needed.
 
 GitHub builds include a Windows **setup** executable with an installation wizard and a separate **portable** executable. On macOS, open the DMG and drag the app into Applications. On Linux, install the `.deb` using your package manager, or make the AppImage executable and run it.
 
@@ -48,7 +48,7 @@ npm run serve
 2. For iPhone, choose **First-time iPhone setup** on the desktop. Install the certificate profile and enable full trust in iOS. This is a one-time local HTTPS setup.
 3. Open the desktop's phone link, or save it with Safari's **Add to Home Screen**.
 4. Inside the phone app, enter the **six-digit desktop code** once. Tap **Start microphone** and grant microphone access.
-5. Wear headphones and enable **Desktop output** to listen. Configure a virtual audio route if you want another app to use it as a microphone.
+5. On Windows, click **Enable Micbridge microphone**, then select **Micbridge Microphone (VB-Audio Virtual Cable)** in your meeting or recording app. Existing cables may retain the name **CABLE Output**. Use headphones for monitoring.
 
 The default phone address is `https://YOUR-DESKTOP-IP:8443/phone`. Reserve the desktop's IP in your router to keep the address stable. Port 8442 serves public certificate setup material; microphone audio and pairing use HTTPS on 8443.
 
