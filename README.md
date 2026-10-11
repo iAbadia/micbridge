@@ -2,11 +2,12 @@
   <img src="docs/assets/readme-banner.png" alt="Micbridge — bring your phone into the mix" width="100%">
 </p>
 
-<p align="center"><strong>A browser microphone for your desktop. Pair once. Open. Speak.</strong></p>
+<h1 align="center">Micbridge — Use your phone as a PC microphone</h1>
+<p align="center"><strong>A wireless microphone for Windows, using your phone browser. Pair once. Open. Speak.</strong></p>
 <p align="center">Created by <strong>Iñaki Abadia</strong> · MIT licensed · Early preview</p>
 <p align="center"><a href="#get-started">Get started</a> · <a href="#platform-support">Platform support</a> · <a href="docs/SETUP.md">Setup guide</a> · <a href="#roadmap">Roadmap</a></p>
 
-Micbridge streams your phone's microphone to a desktop on the same local network. The phone runs a browser app; the desktop receives audio, provides listening and recording controls, and can route it to an available virtual microphone.
+Micbridge lets you use your phone as a microphone for your PC over Wi-Fi. The Windows microphone route has been tested with an iPhone using Safari, with no phone app to install. The desktop receives audio, provides listening and WAV recording controls, and can send it to a virtual microphone for a meeting or recording app.
 
 > **Release · 0.4.0** — Windows installation and virtual microphone output have been tested with an iPhone. Linux/macOS builds pass CI; audio routing still needs hardware validation. Safari screen locking can interrupt streaming; keep the phone app open and the screen awake.
 
