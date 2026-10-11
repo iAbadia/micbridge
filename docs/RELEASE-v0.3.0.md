@@ -1,3 +1,5 @@
+> Archived release: downloads have been withdrawn. Use [Micbridge 0.4.0](https://github.com/iAbadia/micbridge/releases/tag/v0.4.0). The historical feature notes below do not describe the current release.
+
 # Micbridge 0.3.0 — early preview
 
 Historical notes: the device adapter described below was removed in v0.3.1. Use v0.3.1 or later for an independent build.
