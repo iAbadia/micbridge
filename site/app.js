@@ -61,7 +61,7 @@ async function loadDownloads() {
         link.textContent = "Build from source";
       }
     }
-    status.textContent = `${release.tag_name} preview · See release notes for platform testing and limitations.`;
+    status.textContent = `${release.tag_name}${release.prerelease ? " preview" : ""} · See release notes for platform testing and limitations.`;
   } catch {
     status.textContent =
       "Direct download links are unavailable. Open GitHub Releases for the current preview, or build from source.";

@@ -18,8 +18,9 @@ driver package are preserved unchanged with their original publisher signatures.
 Validation includes 14 application tests, Windows app installation/uninstall,
 fresh signed driver installation, endpoint naming, existing-driver reuse, and a
 real 48 kHz stereo tone recorded through the cable on a disposable Windows runner.
-Phone-to-conferencing-app validation on physical Windows 10/11 hardware remains
-the final manual check; this release is kept as a draft preview for that review.
+The Windows installation and phone-to-virtual-microphone path have also been
+confirmed on the maintainer's PC. Broader Windows 10/11 hardware testing remains
+ongoing.
 
 The desktop app also includes setup/retry buttons and a Start menu setup shortcut.
 Automatic routing targets the base CABLE Input, with silence during switching and
