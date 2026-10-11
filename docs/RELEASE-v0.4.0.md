@@ -2,7 +2,7 @@
 
 The Windows x64 installer now bundles the Microsoft-signed base VB-CABLE driver
 with an optional setup page, VB-Audio attribution, donation links, and licensing
-information. No other microphone software installation or Windows test-signing is required.
+information. No Windows test-signing is required.
 
 Complete the official VB-Audio setup when prompted, restart Windows, then click
 **Enable Micbridge microphone**. A fresh installation receives the display name

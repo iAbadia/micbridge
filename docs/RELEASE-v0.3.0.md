@@ -27,7 +27,7 @@ Run the desktop on the same local network as your phone. Follow its certificate 
 - This Windows build is **unsigned**. Windows may display a SmartScreen warning.
 - Windows monitoring with iPhone/Safari has been tested. Fresh-machine setup and virtual microphone consumption by conferencing apps still need validation.
 - Safari may stop microphone streaming when the phone locks or the web app moves into the background. Keep the app visible and the screen awake.
-- Windows virtual microphone routing requires a separately installed virtual audio cable or an existing other microphone software V2 device. The included independent user-mode adapter supplies no proprietary kernel driver and does not install one.
+- Windows virtual microphone routing requires a separately installed virtual audio cable or another compatible virtual audio device. The included independent user-mode adapter supplies no proprietary kernel driver and does not install one.
 - Linux and macOS source support is included, but downloadable binaries and hardware audio routing validation are not part of this release.
 - Neural noise reduction and compressed WebRTC/Opus transmission are not implemented. Browser audio processing is used where supported.
 

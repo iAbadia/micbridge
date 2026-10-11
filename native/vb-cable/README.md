@@ -1,7 +1,7 @@
 # Windows virtual microphone: VB-CABLE
 
 The Windows x64 setup includes the original base VB-CABLE package from VB-Audio.
-It requires no other microphone software installation and no test-signing or Secure Boot changes.
+It requires no test-signing or Secure Boot changes.
 VB-CABLE is separately licensed donationware; see [NOTICE.txt](NOTICE.txt) and
 [VB-Audio's terms](https://vb-audio.com/Services/licensing.htm).
 

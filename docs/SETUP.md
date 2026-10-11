@@ -1,6 +1,6 @@
 # Micbridge setup guide
 
-Cross-platform desktop receiver and browser microphone, based on a static investigation of the installed other microphone software Windows client. This is an independent implementation and a working preview, **not full feature parity**. Original binaries, branding assets, recovered source and model files are not packaged.
+Micbridge is a cross-platform desktop receiver with a browser microphone companion. The Windows virtual microphone route has been tested with iPhone/Safari; other platform routes still need hardware validation.
 
 ## Run
 
@@ -32,7 +32,7 @@ For a trusted certificate, the CLI accepts `MICBRIDGE_TLS_KEY` and `MICBRIDGE_TL
 
 ## Audio routing
 
-- **Windows**: enable Desktop output for headphone monitoring. To use received audio in a meeting/recording app, install an independent virtual audio cable, choose its playback endpoint in Micbridge, then select its recording endpoint as the microphone in the consuming app. Micbridge never opens a other microphone software device, installs its driver, or requires its application.
+- **Windows**: enable Desktop output for headphone monitoring. To use received audio in a meeting/recording app, install an independent virtual audio cable, choose its playback endpoint in Micbridge, then select its recording endpoint as the microphone in the consuming app. The Windows installer offers optional signed VB-CABLE setup and automatic routing.
 - **Linux**: the adapter uses `pactl` and `pacat` with PulseAudio or PipeWire's PulseAudio compatibility service. It creates a null sink and remapped microphone on explicit enable and unloads its modules when disabled or the app exits. Select **Micbridge Microphone** in the consuming app. These tools must already be installed. Linux routing is implemented but not tested on this Windows host.
 - **macOS**: select an installed virtual audio device as Desktop output, then its input endpoint in the consuming app. A built-in CoreAudio virtual driver is not implemented. macOS runtime/packaging needs validation on a Mac.
 

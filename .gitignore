@@ -5,7 +5,7 @@ release/
 .micbridge/
 .micbridge-usability/
 analysis/recovered/
-other microphone software-evidence.json
+investigation-evidence.json
 web/*.js
 web/*.js.map
 !web/capture-worklet.js

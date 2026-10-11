@@ -6,8 +6,7 @@ packages now use [VB-CABLE](../vb-cable/README.md); this unsigned driver is excl
 Development implementation; not yet a production-signed, hardware-validated driver.
 Windows 11 x64 is the initial target. The pinned Microsoft Simple Audio Sample
 provides PortCls/WaveRT endpoints. Micbridge replaces the generated test tone with
-a bounded, spin-lock-protected render-to-capture PCM buffer. Nothing from other microphone software
-is used. No extra audio service, network listener, file recording, or custom IOCTL
+a bounded, spin-lock-protected render-to-capture PCM buffer. No extra audio service, network listener, file recording, or custom IOCTL
 is introduced in the driver.
 
 The app sends audio to **Micbridge Input** through Windows audio. Other apps select

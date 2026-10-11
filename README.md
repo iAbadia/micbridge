@@ -64,7 +64,7 @@ Visit the [project homepage](https://iabadia.github.io/micbridge/). See the [set
 | **iPhone / Safari** | User confirmed audible desktop monitoring | Foreground browser capture; locked-screen streaming is not reliable |
 | **Android browser** | Implemented; device unverified | Requires trusted HTTPS and microphone permission |
 
-Micbridge has no dependency on other microphone software. The Windows x64 installer includes optional setup of the Microsoft-signed **VB-CABLE** driver from VB-Audio. New installations use the display name **Micbridge Microphone (VB-Audio Virtual Cable)**; existing cables keep their names. Enable the Micbridge microphone, then select its recording endpoint in your meeting or recording app. VB-CABLE is separately licensed donationware with professional licensing requirements; it is not covered by Micbridge’s MIT license. See the [setup and licensing documentation](native/vb-cable/README.md). The earlier experimental Micbridge-owned driver is excluded from releases.
+The Windows x64 installer includes optional setup of the Microsoft-signed **VB-CABLE** driver from VB-Audio. New installations use the display name **Micbridge Microphone (VB-Audio Virtual Cable)**; existing cables keep their names. Enable the Micbridge microphone, then select its recording endpoint in your meeting or recording app. VB-CABLE is separately licensed donationware with professional licensing requirements; it is not covered by Micbridge’s MIT license. See the [setup and licensing documentation](native/vb-cable/README.md). The earlier experimental Micbridge-owned driver is excluded from releases.
 
 ## Privacy and pairing
 

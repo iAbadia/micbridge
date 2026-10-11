@@ -1,6 +1,6 @@
 # Micbridge 0.3.1 — independent desktop preview
 
-Micbridge no longer uses a other microphone software device, application, or driver. The legacy native adapter and its bundled .NET helper have been removed from source, runtime, installers, and CI.
+Micbridge uses independent virtual audio routes. The legacy native adapter and its bundled .NET helper have been removed from source, runtime, installers, and CI.
 
 ## Downloads
 

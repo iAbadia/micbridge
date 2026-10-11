@@ -7,23 +7,19 @@ Prepared October 11, 2026. Budget: zero. Author: Iñaki Abadia.
 **Use your iPhone as a Windows microphone. Open source. No phone app.**
 
 The first audience is people who want a phone microphone for their Windows PC,
-especially iPhone users who prefer a browser to another app download. People
-looking for a other microphone software alternative are a secondary audience with a clear reason
-to visit the comparison page.
+especially iPhone users who prefer a browser to another app download. People exploring browser-based audio tools are a secondary audience.
 
 Do not market this as better audio quality, lower latency, or an effortless
 replacement. We have no comparative benchmarks. Be clear about certificate
 setup, Safari needing an awake screen, unsigned desktop packages, and separately
 licensed VB-CABLE. Do not present Android, Linux or macOS hardware support as
-validated. Do not imply that other microphone software users can connect their existing phone app
-to Micbridge.
+validated. Explain that capture uses Micbridge’s own browser page.
 
 ## Search pages shipped
 
 | Search intent | Page | What the visitor gets |
 | --- | --- | --- |
 | phone as PC microphone / open-source phone microphone | [Homepage](https://iabadia.github.io/micbridge/) | Product explanation, downloads, requirements |
-| other microphone software alternative | [Comparison](https://iabadia.github.io/micbridge/other microphone software-alternative.html) | Sourced workflow comparison and switching steps |
 | iPhone as Windows PC microphone / no phone app | [Setup guide](https://iabadia.github.io/micbridge/iphone-as-pc-microphone.html) | Certificate, pairing, VB-CABLE and troubleshooting |
 
 These are editorial targets, not measured search-volume data. No ranking or
@@ -45,7 +41,7 @@ crawling: robots.txt is read at the origin root, not `/micbridge/robots.txt`.
 2. Add the site to Google Search Console as a URL-prefix property using exactly
    `https://iabadia.github.io/micbridge/`. The owner's Google account is needed.
    Obtain its HTML verification file or meta tag, add it to Pages, verify, and
-   submit `sitemap.xml`. Request indexing for the three pages. Ownership and
+   submit `sitemap.xml`. Request indexing for the two pages. Ownership and
    indexing are not yet configured or confirmed.
 3. Post a maker announcement on an appropriate project-sharing community after
    checking current rules. Hacker News Show HN and Reddit project-sharing
@@ -115,10 +111,9 @@ with different competitor names.
 
 ## Source and brand caution
 
-Competitor workflow claims are sourced to [other microphone software's official site](https://other microphone software.io/),
-checked October 11, 2026. Recheck before changing comparisons or quoting prices.
-Avoid claims about ads, subscriptions, safety or audio superiority based on
-third-party anecdotes.
+Keep marketing focused on Micbridge’s documented features and tested behavior.
+Avoid claims about competing products’ ads, subscriptions, safety or audio
+superiority based on third-party anecdotes.
 
 Search surfaced another project using the name MicBridge in a Moonlight/LAN
 microphone context. Treat this as a possible search-disambiguation issue, not a
