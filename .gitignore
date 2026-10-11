@@ -5,7 +5,7 @@ release/
 .micbridge/
 .micbridge-usability/
 analysis/recovered/
-investigation-evidence.json
+*-evidence.json
 web/*.js
 web/*.js.map
 !web/capture-worklet.js
